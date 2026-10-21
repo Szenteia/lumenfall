@@ -1,0 +1,18 @@
+import{W,H,createGame,step,heal,rest,extract,nextRun}from'./game.js';
+const $=s=>document.querySelector(s),key='lumenfall-save-v1';let state=createGame(),saveError=false;
+try{const saved=JSON.parse(localStorage.getItem(key));if(saved?.version===1&&saved.tiles?.length===W*H&&Array.isArray(saved.enemies)&&Array.isArray(saved.chests)&&Number.isFinite(saved.hp)&&Number.isFinite(saved.bank)&&Number.isInteger(saved.x)&&Number.isInteger(saved.y)&&saved.x>0&&saved.x<W-1&&saved.y>0&&saved.y<H-1&&['active','extracted','defeated'].includes(saved.status))state=saved;}catch{}
+const canvas=$('#game'),ctx=canvas.getContext('2d'),size=40;canvas.width=W*size;canvas.height=H*size;
+function save(){try{localStorage.setItem(key,JSON.stringify(state));saveError=false;}catch{saveError=true;}}
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){const wall=state.tiles[y*W+x];ctx.fillStyle=wall?'#293746':(x+y)%2?'#161f2c':'#1a2532';ctx.fillRect(x*size+1,y*size+1,size-2,size-2);if(wall){ctx.fillStyle='#3b4a59';ctx.fillRect(x*size+1,y*size+1,size-2,4);}}
+ const glyph=(x,y,text,color)=>{ctx.fillStyle=color;ctx.font='25px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x*size+size/2,y*size+size/2);};
+ glyph(2,6,'◎','#7fe3cf');for(const c of state.chests)glyph(c.x,c.y,'◆','#edc473');for(const e of state.enemies){glyph(e.x,e.y,'♟','#dd7c87');ctx.fillStyle='#e9a2a9';ctx.fillRect(e.x*size+9,e.y*size+34,e.hp*2,3);}glyph(state.x,state.y,'♜','#d5ecef');
+ $('#health').textContent=`♥ ${state.hp}/${state.maxHp} · Ital: ${state.potions}`;$('#loot').textContent=`◆ Zsákmány: ${state.loot}`;$('#bank').textContent=`✦ Céhkincstár: ${state.bank}`;$('#log').textContent=saveError?'A mentés nem sikerült. Engedélyezd a böngésző helyi tárolóját.':state.log;
+ $('#next').hidden=state.status==='active';$('#extract').disabled=state.status!=='active'||state.x!==2||state.y!==6;$('#heal').disabled=state.status!=='active'||state.potions===0||state.hp===state.maxHp;$('#wait').disabled=state.status!=='active';
+}
+function act(fn){if($('#paused').open)return;fn();save();draw();}
+const dirs={ArrowUp:[0,-1],w:[0,-1],ArrowDown:[0,1],s:[0,1],ArrowLeft:[-1,0],a:[-1,0],ArrowRight:[1,0],d:[1,0]};
+window.addEventListener('keydown',e=>{if(e.repeat||e.altKey||e.ctrlKey||e.metaKey)return;const dir=dirs[e.key]||dirs[e.key.toLowerCase()];if(dir){e.preventDefault();act(()=>step(state,...dir));}});
+document.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>act(()=>step(state,...b.dataset.dir.split(',').map(Number))));
+$('#heal').onclick=()=>act(()=>heal(state));$('#wait').onclick=()=>act(()=>rest(state));$('#extract').onclick=()=>act(()=>extract(state));$('#next').onclick=()=>act(()=>{state=nextRun(state);});
+$('#pause').onclick=()=>{save();draw();$('#saveState').textContent=saveError?'A mentés nem sikerült; ne zárd be ezt a lapot.':'Elmentve. Ezen az eszközön és böngészőben innen folytathatod.';$('#paused').showModal();};$('#resume').onclick=()=>$('#paused').close();document.addEventListener('visibilitychange',()=>{if(document.hidden){save();if(!$('#paused').open)$('#paused').showModal();}});draw();
