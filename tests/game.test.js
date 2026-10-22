@@ -1,6 +1,8 @@
-import{test}from'node:test';import assert from'node:assert/strict';import{createGame,step,extract,nextRun,heal}from'../src/game.js';
+import{test}from'node:test';import assert from'node:assert/strict';import{createGame as createDailyGame,step,extract,nextRun,heal}from'../src/game.js';
+const createGame=()=>createDailyGame({dayId:'2026-10-22'});
 test('Walls do not consume a turn',()=>{const s=createGame();s.x=1;assert.equal(step(s,-1,0),false);assert.equal(s.turn,0);});
 test('Only extraction banks loot; next run preserves bank',()=>{const s=createGame();s.loot=60;s.x=3;assert.equal(extract(s),false);assert.equal(s.bank,0);s.x=2;assert.equal(extract(s),true);assert.equal(s.bank,60);assert.equal(s.loot,0);assert.equal(nextRun(s).bank,60);});
 test('Death loses carried loot, preserves bank, blocks movement',()=>{const s=createGame();s.hp=1;s.bank=12;s.loot=40;s.enemies=[{x:3,y:6,hp:8}];step(s,1,0);assert.equal(s.status,'defeated');assert.equal(s.loot,0);assert.equal(s.bank,12);assert.equal(step(s,0,1),false);});
 test('Healing costs a potion and turn, cannot exceed maximum',()=>{const s=createGame();s.hp=20;s.enemies=[];heal(s);assert.equal(s.hp,24);assert.equal(s.potions,1);assert.equal(s.turn,1);heal(s);assert.equal(s.potions,1);});
 test('Saved JSON continues with identical outcome',()=>{const a=createGame();step(a,1,0);const b=JSON.parse(JSON.stringify(a));step(a,0,1);step(b,0,1);assert.deepEqual(a,b);});
+
