@@ -1,7 +1,7 @@
-export const W=17,H=13;
-export function createGame(){
- const tiles=Array.from({length:W*H},(_,i)=>{let x=i%W,y=Math.floor(i/W);return x===0||y===0||x===W-1||y===H-1||((x===6||x===11)&&y>2&&y<10&&y!==6)?1:0;});
- return {version:1,x:2,y:6,hp:24,maxHp:24,potions:2,loot:0,bank:0,turn:0,status:'active',tiles,enemies:[{x:4,y:4,hp:6},{x:9,y:7,hp:8},{x:14,y:5,hp:10}],chests:[{x:4,y:2},{x:9,y:3},{x:14,y:9}],log:'A Lámpáscéh rád bízza az első expedíciót.'};
+import { W, H, RULES_VERSION, getDayId, generateDungeon } from './daily.js';
+export { W, H } from './daily.js';
+export function createGame({now = new Date(), dayId = getDayId(now)} = {}){
+ return {version:2,dayId,rulesVersion:RULES_VERSION,x:2,y:6,hp:24,maxHp:24,potions:2,loot:0,bank:0,turn:0,status:'active',...generateDungeon(dayId),log:'A Lámpáscéh rád bízza az első expedíciót.'};
 }
 export function step(s,dx,dy){
  if(s.status!=='active'||Math.abs(dx)+Math.abs(dy)!==1)return false;
@@ -24,4 +24,5 @@ function resolveEnemies(s){
 export function rest(s){if(s.status!=='active')return;resolveEnemies(s);}
 export function heal(s){if(s.status!=='active'||!s.potions||s.hp===s.maxHp)return;s.potions--;s.hp=Math.min(s.maxHp,s.hp+10);resolveEnemies(s);}
 export function extract(s){if(s.status!=='active'||s.x!==2||s.y!==6)return false;s.bank+=s.loot;s.loot=0;s.status='extracted';s.log='Sikeres kijutás! A céh megőrizte a kristályaidat.';return true;}
-export function nextRun(s){const n=createGame();n.bank=s.bank;return n;}
+export function nextRun(s, options){const n=createGame(options);n.bank=s.bank;return n;}
+
