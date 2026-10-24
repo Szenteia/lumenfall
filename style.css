@@ -7,3 +7,5 @@
 .wait-forecast p+p{margin-top:6px;font-size:12px;color:#b5c0cc}
 .wait-forecast.is-fatal{border-color:#e88d96;background:#38242e}
 .wait-forecast.is-fatal p:first-child{color:#ffb7be}
+
+.save-transfer{margin-top:20px;border-top:1px solid #526174;padding-top:12px}.save-transfer h3{margin:0 0 8px}.save-transfer p{font-size:13px;overflow-wrap:anywhere}.save-transfer button{width:100%}.import-dialog{box-sizing:border-box;width:min(540px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:auto}.import-dialog h2{font-size:22px}.import-dialog input{display:block;max-width:100%;margin:12px 0}.import-dialog button{display:block;width:100%;margin-top:10px;white-space:normal}.import-dialog p{overflow-wrap:anywhere}.import-dialog::backdrop{background:#071019cc}
