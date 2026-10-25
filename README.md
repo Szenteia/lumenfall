@@ -2,6 +2,10 @@
 
 SzenteiA saját, felülnézetes, taktikai dungeon játéka. Első játszható alap: 2026-10-21.
 
+## Visszatérés a kapuhoz
+
+A „Kapu: legalább N mező” jelzés a legrövidebb, falakat kerülő, négyirányú út hosszát mutatja. Az őrzők és a harc további köröket jelenthetnek: ez térképi távolság, nem biztonságos kijutás vagy körszám-előrejelzés. A kapunál külön üzenet jelzi a kijutás lehetőségét; lezárt futamnál a jelzés eltűnik. A kijelzés nem lépteti vagy módosítja az expedíciót.
+
 ## Indítás
 
 Node 22+ a tesztekhez, Python 3 a fejlesztői kiszolgálóhoz. Nincs telepítendő npm függőség.
