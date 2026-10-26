@@ -1,3 +1,4 @@
+import{mountTransfer}from'./transfer-view.js';
 import{previewWait}from'./tactics.js';
 import{mountWaitPreview,drawWaitTargets}from'./tactics-view.js';
 import{W,H,createGame,step,heal,rest,extract,nextRun}from'./game.js';
@@ -18,12 +19,13 @@ function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);
  $('#health').textContent=`♥ ${state.hp}/${state.maxHp} · Ital: ${state.potions}`;$('#loot').textContent=`◆ Zsákmány: ${state.loot}`;$('#bank').textContent=`✦ Céhkincstár: ${state.bank}`;$('#log').textContent=saveError?'A mentés nem sikerült. Engedélyezd a böngésző helyi tárolóját.':state.log;
  $('#next').hidden=state.status==='active';$('#extract').disabled=state.status!=='active'||state.x!==2||state.y!==6;$('#heal').disabled=state.status!=='active'||state.potions===0||state.hp===state.maxHp;$('#wait').disabled=state.status!=='active';
 }
-function act(fn){if($('#paused').open)return;fn();save();draw();}
+const transfer=mountTransfer({getState:()=>state,applyState:loaded=>{state=loaded;saveError=false;draw();},storage:()=>localStorage,parent:$('aside')});
+function act(fn){if($('#paused').open||transfer.isOpen())return;fn();save();draw();}
 const dirs={ArrowUp:[0,-1],w:[0,-1],ArrowDown:[0,1],s:[0,1],ArrowLeft:[-1,0],a:[-1,0],ArrowRight:[1,0],d:[1,0]};
-window.addEventListener('keydown',e=>{if(e.repeat||e.altKey||e.ctrlKey||e.metaKey)return;const dir=dirs[e.key]||dirs[e.key.toLowerCase()];if(dir){e.preventDefault();act(()=>step(state,...dir));}});
+window.addEventListener('keydown',e=>{if(transfer.isOpen()||$('#paused').open)return;if(e.repeat||e.altKey||e.ctrlKey||e.metaKey)return;const dir=dirs[e.key]||dirs[e.key.toLowerCase()];if(dir){e.preventDefault();act(()=>step(state,...dir));}});
 document.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>act(()=>step(state,...b.dataset.dir.split(',').map(Number))));
 $('#heal').onclick=()=>act(()=>heal(state));$('#wait').onclick=()=>act(()=>rest(state));$('#extract').onclick=()=>act(()=>extract(state));$('#next').onclick=()=>act(()=>{state=nextRun(state);});
-$('#pause').onclick=()=>{save();draw();$('#saveState').textContent=saveError?'A mentés nem sikerült; ne zárd be ezt a lapot.':'Elmentve. Ezen az eszközön és böngészőben innen folytathatod.';$('#paused').showModal();};$('#resume').onclick=()=>{$('#paused').close();draw();};document.addEventListener('visibilitychange',()=>{if(document.hidden){save();if(!$('#paused').open)$('#paused').showModal();}else draw();});save();draw();
+$('#pause').onclick=()=>{save();draw();$('#saveState').textContent=saveError?'A mentés nem sikerült; ne zárd be ezt a lapot.':'Elmentve. Ezen az eszközön és böngészőben innen folytathatod.';$('#paused').showModal();};$('#resume').onclick=()=>{$('#paused').close();draw();};document.addEventListener('visibilitychange',()=>{if(document.hidden){save();if(!$('#paused').open&&!transfer.isOpen())$('#paused').showModal();}else draw();});save();draw();
 
 
 

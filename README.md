@@ -43,3 +43,9 @@ Minden új expedíció a magyar naptári nap (Europe/Budapest, téli/nyári idő
 A mentés teljes futamállapotot tárol: éjfél után sem változik meg a folyamatban lévő térképed. Korábbi napi expedíció gyakorlóként folytatható; az új expedíció már az aktuális naphoz tartozik. A régi v1-es mentések automatikusan gyakorló mentésként folytatódnak, a pálya, a szereplők és a céhkincstár megmarad. Az eredeti localStorage kulcs változatlan.
 
 `src/daily.js`: napazonosító és verziózott pályagenerátor. `src/save.js`: mentés-visszaállítás és v1 kompatibilitás. A generálás véges számú falelhelyezési próbát végez, és csak összefüggő járható területet tart meg.
+
+## Mentés átvitele másik eszközre
+
+A **Mentés letöltése** gomb JSON biztonsági másolatot készít az aktuális expedícióról és céhkincstárról. Vidd át a fájlt a másik eszközre, ott válaszd a **Mentés betöltése** gombot és a fájlt. Ellenőrizd az előnézetet, majd külön erősítsd meg a jelenlegi mentés cseréjét. A kincstár felülíródik, nem adódik össze. Csere előtt érdemes a célkészüléken is letölteni egy másolatot; a **Mégse** megőrzi a haladást. A betöltési ablak alatt a játék szünetel.
+
+Legfeljebb 64 KiB-os Lumenfall export fogadható el. A korábbi v1 játékállapotot tartalmazó, azonosított export is migrálható; egy csupasz localStorage JSON nem exportfájl. Régebbi napi expedíció a saját pályáján, gyakorlóként folytatódik. Nincs automatikus felhőszinkronizálás vagy fájlfeltöltés. A helyi mentés és az importált pontszám nem hitelesített ranglistaeredmény. A letöltési visszajelzés a böngészőnek átadott kérést jelzi; a fájl tényleges mentését a letöltéseknél ellenőrizd.
