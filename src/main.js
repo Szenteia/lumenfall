@@ -4,13 +4,16 @@ import{mountWaitPreview,drawWaitTargets}from'./tactics-view.js';
 import{W,H,createGame,step,heal,rest,extract,nextRun}from'./game.js';
 import{expeditionLabel}from'./daily.js';
 import{SAVE_KEY,restoreGame}from'./save.js';
+import{mountGateDistance}from'./gate-view.js';
 const $=s=>document.querySelector(s),key=SAVE_KEY;let state=null,saveError=false;
 try{state=restoreGame(localStorage.getItem(key));}catch{}
 state ??= createGame();
 const canvas=$('#game'),ctx=canvas.getContext('2d'),size=40;canvas.width=W*size;canvas.height=H*size;
 const renderWaitPreview=mountWaitPreview($('#wait'));
+const renderGateDistance=mountGateDistance($('#extract'));
 function save(){try{localStorage.setItem(key,JSON.stringify(state));saveError=false;}catch{saveError=true;}}
 function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);
+ renderGateDistance(state);
  $('#expedition').textContent=expeditionLabel(state);
  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const wall=state.tiles[y*W+x];ctx.fillStyle=wall?'#293746':(x+y)%2?'#161f2c':'#1a2532';ctx.fillRect(x*size+1,y*size+1,size-2,size-2);if(wall){ctx.fillStyle='#3b4a59';ctx.fillRect(x*size+1,y*size+1,size-2,4);}}
  const forecast=previewWait(state);renderWaitPreview(forecast);drawWaitTargets(ctx,forecast,size);
