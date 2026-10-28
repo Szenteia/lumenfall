@@ -11,3 +11,5 @@
 .wait-forecast.is-fatal p:first-child{color:#ffb7be}
 
 .save-transfer{margin-top:20px;border-top:1px solid #526174;padding-top:12px}.save-transfer h3{margin:0 0 8px}.save-transfer p{font-size:13px;overflow-wrap:anywhere}.save-transfer button{width:100%}.import-dialog{box-sizing:border-box;width:min(540px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:auto}.import-dialog h2{font-size:22px}.import-dialog input{display:block;max-width:100%;margin:12px 0}.import-dialog button{display:block;width:100%;margin-top:10px;white-space:normal}.import-dialog p{overflow-wrap:anywhere}.import-dialog::backdrop{background:#071019cc}
+
+.movement-preview{width:100%;min-width:0;margin:10px 0;padding:12px;border:1px solid #435d70;border-radius:9px;background:#192733;overflow-wrap:anywhere}.movement-preview h3{font-size:14px;line-height:1.5;margin:0 0 8px;color:#d6e6ed}.movement-preview p{font-size:13px;line-height:1.5;margin:6px 0;color:#ccd9e0}.movement-preview .is-fatal{color:#ffb7be;font-weight:700}.movement-preview .movement-hint{font-size:12px;color:#acbecb}
