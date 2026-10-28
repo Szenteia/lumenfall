@@ -23,7 +23,7 @@ Nyisd meg: http://localhost:5173 . Windows alatt, ha a python3 parancs nem talá
 
 ## Játékmenet
 
-- WASD / nyilak, telefonon érintéses iránygombok.
+- WASD / nyilak, telefonon érintéses iránygombok. 760 px szélességig az iránygombok görgetés közben is a képernyő alján maradnak; a lap alján külön hely biztosítja, hogy a mentéskezelők és a lábléc felgörgethetők legyenek a sáv fölé.
 - A fehér bábu a játékos, a rózsaszín bábuk az őrzők, az arany rombuszok az ereklyék.
 - Az őrző felé lépés támadás. A falnak lépés nem fogyaszt kört.
 - A közeli őrzők minden második körben közelednek; a szomszédos őrző minden körben visszaüt.
