@@ -2,6 +2,10 @@
 
 SzenteiA saját, felülnézetes, taktikai dungeon játéka. Első játszható alap: 2026-10-21.
 
+## Mozgás és kardcsapás előnézete
+
+A négyirányú taktikai panel megmutatja, hogy a következő iránygomb lépést, kardcsapást vagy blokkolt próbálkozást jelentene, és mennyi HP maradna az őrzők válasza után. A „VÉGZETES” jelzés halálos kimenetelt jelez. A négy sor külön lehetőség, nem akciósorozat; az előnézet nem fogyaszt kört és nem módosít mentést. Falnak lépés nem indít őrzőkört. Őrzőre csapáskor a karakter a helyén marad, megöléskor is. A megszokott irányítás egy megnyomással működik.
+
 ## Visszatérés a kapuhoz
 
 A „Kapu: legalább N mező” jelzés a legrövidebb, falakat kerülő, négyirányú út hosszát mutatja. Az őrzők és a harc további köröket jelenthetnek: ez térképi távolság, nem biztonságos kijutás vagy körszám-előrejelzés. A kapunál külön üzenet jelzi a kijutás lehetőségét; lezárt futamnál a jelzés eltűnik. A kijelzés nem lépteti vagy módosítja az expedíciót.
@@ -19,7 +23,7 @@ Nyisd meg: http://localhost:5173 . Windows alatt, ha a python3 parancs nem talá
 
 ## Játékmenet
 
-- WASD / nyilak, telefonon érintéses iránygombok.
+- WASD / nyilak, telefonon érintéses iránygombok. 760 px szélességig az iránygombok görgetés közben is a képernyő alján maradnak; a lap alján külön hely biztosítja, hogy a mentéskezelők és a lábléc felgörgethetők legyenek a sáv fölé.
 - A fehér bábu a játékos, a rózsaszín bábuk az őrzők, az arany rombuszok az ereklyék.
 - Az őrző felé lépés támadás. A falnak lépés nem fogyaszt kört.
 - A közeli őrzők minden második körben közelednek; a szomszédos őrző minden körben visszaüt.
