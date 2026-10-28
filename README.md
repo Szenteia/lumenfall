@@ -35,6 +35,10 @@ Nyisd meg: http://localhost:5173 . Windows alatt, ha a python3 parancs nem talá
 
 Ez működő egyjátékos prototípus, nem kész online játék. Naponként változó pálya, sematikus bábuk és magyar felület. Nincs még közös ranglista, szerver, fiók, felhőmentés vagy valódi PvP. A böngésző adatainak törlése törli a helyi mentést. Más eszközre jelenleg nem vihető át. Mobilos tényleges eszközteszt szükséges; kompatibilitási célokat nem kezelünk mért eredményként.
 
+## Indítási mentésvédelem
+
+Hibás vagy nem támogatott mentésnél a játék nem kezdi automatikusan felülírni a korábbi adatot. A helyreállítási ablakban letöltheted az eredeti szöveget biztonsági másolatként, vagy újrapróbálhatod az olvasást. Ez a nyers másolat nem garantáltan betölthető játékexport. Az újrakezdés külön megerősítést kér, és a céhkincstárat is lecseréli; csak sikeres tárhelyírás után indul el. Tárhelyhiba esetén a játék védetten vár. Escape/Mégse az újrakezdési kérdést vonja vissza; a védelem megmarad.
+
 ## Mappák
 
 `src/game.js`: böngészőtől független játékszabályok. `src/main.js`: input, canvas, mentés. `style.css`: reszponzív UI. `tests/`: Node tesztek. `docs/`: termékterv és napi fejlesztési rend.
