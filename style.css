@@ -7,6 +7,11 @@
 .wait-forecast p{margin:0;font-size:13px;line-height:1.5}
 .wait-forecast p:first-child{color:#f0d59e;font-weight:600}
 .wait-forecast p+p{margin-top:6px;font-size:12px;color:#b5c0cc}
+/* Recovery is modal and remains usable in short/narrow viewports. */
+.recovery-dialog{box-sizing:border-box;width:min(480px,calc(100% - 24px));max-width:calc(100% - 24px);max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);overflow:auto;overflow-wrap:anywhere}
+.recovery-dialog button{display:block;width:100%;white-space:normal}
+.recovery-dialog section{margin-top:16px;padding-top:12px;border-top:1px solid #8b6b61}
+
 .wait-forecast.is-fatal{border-color:#e88d96;background:#38242e}
 .wait-forecast.is-fatal p:first-child{color:#ffb7be}
 
