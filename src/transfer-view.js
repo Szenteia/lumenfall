@@ -1,6 +1,6 @@
 import { commitImport, downloadSave, importSummary, readSaveFile } from './transfer.js';
 
-export function mountTransfer({ getState, applyState, storage, parent, document = globalThis.document }) {
+export function mountTransfer({ getState, applyState, storage, parent, onOpen = () => {}, document = globalThis.document }) {
   const make = (tag, text) => { const node = document.createElement(tag); if (text) node.textContent = text; return node; };
   const panel = make('section'); panel.className = 'save-transfer';
   const heading = make('h3', 'Mentés átvitele');
@@ -29,7 +29,7 @@ export function mountTransfer({ getState, applyState, storage, parent, document 
       status.textContent = 'Letöltés kérve. Ellenőrizd a böngésző letöltéseit.';
     } catch { status.textContent = 'A letöltés nem indítható. A jelenlegi expedíció megmaradt.'; }
   };
-  upload.onclick = () => { reset(); dialog.showModal(); input.focus(); };
+  upload.onclick = () => { onOpen(); reset(); dialog.showModal(); input.focus(); };
   input.onchange = async () => {
     const request = ++generation; candidate = null; confirm.disabled = true;
     if (!input.files?.length) { preview.textContent = 'Nem választottál fájlt.'; return; }

@@ -4,14 +4,25 @@
 
 Stratégiai, megszakítható expedíciók. Saját kalandozó és céhkincstár. A játékos azzal versenyez, milyen értéket képes kimenteni a közös napi labirintusból. Kezdetben aszinkron verseny: nem szükséges egyszerre online lenni, és bármikor megállítható a játék. Élő PvP csak külön módként, későbbi döntés alapján.
 
-## Következő kis lépések
+## Elsődleges irányok · 2026-10-29-től
 
-1. Determinisztikus napi pálya: ugyanaz a seed minden játékosnak, elérhető kijárat és ereklyék tesztekkel.
-2. Lámpásmechanika: fényerő–észlelés–jutalom döntés; átlátható ellenséges szándékok.
-3. Három eltérő kezdő felszerelés; ranglistás módban egyenlő kezdő feltételek.
-4. Több böngészőn és valódi mobilokon input, szünet, mentés és teljesítmény tesztelése; mentésexport/import.
-5. Szerveroldali futamhitelesítés és globális napi ranglista.
-6. Céhes fejlődés, eredeti karaktergrafika, HU/EN felület, hang és akadálymentesítési finomítások.
+Tulajdonosi prioritás: nagyobb, látványosabb és változatosabb dungeonök, saját anime stílusú animált szereplőkkel. Eredeti világ és karakterek; ismert anime-szereplők átvétele nélkül. Minden napi feladat egy kicsi, önállóan befejezhető lépés.
+
+1. Eredeti lámpáscéhes kalandozó, rövid lépés- és kardcsapás-animációval (ennek a változásnak a hatóköre). További őrzők, mozgás- és harci megjelenések külön lépésekben.
+2. Eltérő vizuális dungeon-környezetek: saját fal-/padlórészletek, színvilágok és helyszínhangulatok, a taktikai olvashatóság megőrzésével.
+3. Pályaméret növelése verziózott, mentéskompatibilis módon; előtte a fix 17×13 feltételezések és mobilos kamera/zoom/pan kezelése. A régi expedíció nem generálódhat újra.
+4. Eltérő terem- és útvonalstruktúrák, összefüggő bejárhatósággal, elérhető kijárattal és zsákmánnyal, determinisztikus napi feltételekkel.
+
+Gyors betöltés, mobil/desktop teljesítmény és mentéskompatibilitás minden lépés követelménye. A fenti sorrend munkairány, nem a még hiányzó funkciók elkészültének állítása. Valódi mobil- és több-böngészős próbák továbbra is szükségesek.
+
+## További tervezett lépések
+
+- Lámpásmechanika: fényerő–észlelés–jutalom döntés; átlátható ellenséges szándékok.
+- Három eltérő kezdő felszerelés; ranglistás módban egyenlő kezdő feltételek.
+- Szerveroldali futamhitelesítés és globális napi ranglista.
+- Céhes fejlődés, HU/EN felület, hang és akadálymentesítési finomítások.
+
+A determinisztikus napi alap, a taktikai előnézetek, a mentésexport/import és az indítási mentésvédelem már a projekt részei.
 
 ## Napi ranglista tervezett szerződése
 
@@ -25,4 +36,4 @@ Szerveroldali tranzakció és dayId szerinti egyedi kulcs garantálja a lezárá
 
 ## Teljesítménycélok (mérés előtt célok)
 
-Webes Canvas 2D alap; nincs WebGL követelmény vagy külső CDN. Eseményenkénti újrarajzolás, üresjáratban nincs folyamatos render. Chrome/Edge/Firefox/Safari, Android és iOS célzott tesztmátrix. Billentyűzet és touch, később gamepad. Jól olvasható UI 360 px-től, pálya zoom/pan kis képernyőre később. Assetekkel együtt külön betöltési keret és memória mérés.
+Webes Canvas 2D alap; nincs WebGL követelmény vagy külső CDN. Eseményenkénti újrarajzolás; akció után rövid, véges animáció lehetséges. Üresjáratban nincs folyamatos render; csökkentett mozgás mellett azonnali állapotmegjelenítés. Chrome/Edge/Firefox/Safari, Android és iOS célzott tesztmátrix. Billentyűzet és touch, később gamepad. Jól olvasható UI 360 px-től, pálya zoom/pan kis képernyőre később. Assetekkel együtt külön betöltési keret és memória mérés.
