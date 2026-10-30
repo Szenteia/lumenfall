@@ -1,3 +1,4 @@
+import{createDungeonBackground}from'./environment.js';
 import{drawAdventurer}from'./character.js';
 import{createCharacterMotion,describeDirection}from'./character-motion.js';
 import{readStartup}from'./recovery.js';
@@ -18,6 +19,7 @@ const renderWaitPreview=mountWaitPreview($('#wait'));
 const renderGateDistance=mountGateDistance($('#extract'));
 const renderMovementPreview=mountMovementPreview($('#heal'));
 function save(){if(!state)return;try{localStorage.setItem(key,JSON.stringify(state));saveError=false;}catch{saveError=true;}}
+const background=createDungeonBackground();
 let forecast=null,facing={dx:0,dy:1};
 const motionPreference=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
 const motion=createCharacterMotion({render:drawScene,
@@ -28,7 +30,7 @@ motionPreference?.addEventListener?.('change',()=>motion.cancel());
 function drawScene(pose=null){
  ctx.clearRect(0,0,canvas.width,canvas.height);
  if(!state)return;
- for(let y=0;y<H;y++)for(let x=0;x<W;x++){const wall=state.tiles[y*W+x];ctx.fillStyle=wall?'#293746':(x+y)%2?'#161f2c':'#1a2532';ctx.fillRect(x*size+1,y*size+1,size-2,size-2);if(wall){ctx.fillStyle='#3b4a59';ctx.fillRect(x*size+1,y*size+1,size-2,4);}}
+ background.paint(ctx);
  drawWaitTargets(ctx,forecast,size);
  const glyph=(x,y,text,color)=>{ctx.fillStyle=color;ctx.font='25px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x*size+size/2,y*size+size/2);};
  glyph(2,6,'◎','#7fe3cf');for(const c of state.chests)glyph(c.x,c.y,'◆','#edc473');for(const e of state.enemies){glyph(e.x,e.y,'♟','#dd7c87');ctx.fillStyle='#e9a2a9';ctx.fillRect(e.x*size+9,e.y*size+34,e.hp*2,3);}drawAdventurer(ctx,pose||{x:state.x,y:state.y,...facing},size);
@@ -37,7 +39,8 @@ function draw(){
  motion.cancel(false);
  if(!state){drawScene();$('#log').textContent='A játék a korábbi mentés védelme miatt vár.';return;}
  renderGateDistance(state);renderMovementPreview(state);
- $('#expedition').textContent=expeditionLabel(state);
+ const environment=background.prepare(state);
+ $('#expedition').textContent=expeditionLabel(state)+' · '+environment.name;
  forecast=previewWait(state);renderWaitPreview(forecast);
  drawScene();
  $('#health').textContent=`♥ ${state.hp}/${state.maxHp} · Ital: ${state.potions}`;$('#loot').textContent=`◆ Zsákmány: ${state.loot}`;$('#bank').textContent=`✦ Céhkincstár: ${state.bank}`;$('#log').textContent=saveError?'A mentés nem sikerült. Engedélyezd a böngésző helyi tárolóját.':state.log;
