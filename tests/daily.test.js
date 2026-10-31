@@ -31,8 +31,8 @@ test('Same day produces independent identical worlds without Math.random', () =>
 });
 
 test('Versioned generator has a stable world fingerprint', () => {
-  assert.equal(RULES_VERSION, 1);
-  const hash = createHash('sha256').update(JSON.stringify(generateDungeon(dayId))).digest('hex');
+  assert.equal(RULES_VERSION, 2);
+  const hash = createHash('sha256').update(JSON.stringify(generateDungeon(dayId,1))).digest('hex');
   assert.equal(hash, '124e8f7a26515afbed452840cd3527d287c0504f0d946f31c9183100fcf71c02');
 });
 
@@ -40,7 +40,7 @@ test('A full year has connected floors, reachable loot, safe arrival and distinc
   const layouts = new Set();
   for (let day = 0; day < 365; day++) {
     const id = new Date(Date.UTC(2026, 0, day + 1)).toISOString().slice(0, 10);
-    const { tiles, enemies, chests } = generateDungeon(id);
+    const { tiles, enemies, chests } = generateDungeon(id,1);
     assert.equal(tiles.length, W * H);
     layouts.add(tiles.join(''));
     for (let x = 0; x < W; x++) { assert.equal(tiles[x], 1); assert.equal(tiles[(H - 1) * W + x], 1); }

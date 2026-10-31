@@ -1,4 +1,4 @@
-import { W, H, RULES_VERSION, isDayId } from './daily.js';
+import { W, H, SUPPORTED_RULES_VERSIONS, isDayId } from './daily.js';
 
 // Keep the original storage key, so existing players retain their expedition and bank.
 export const SAVE_KEY = 'lumenfall-save-v1';
@@ -30,6 +30,6 @@ export function restoreGame(json) {
     || typeof state.log !== 'string' || state.log.length > 2000) return null;
   if (state.version === 1) return { ...state, version: 2, dayId: null, rulesVersion: 0 };
   if (!(state.dayId === null && state.rulesVersion === 0)
-    && !(isDayId(state.dayId) && state.rulesVersion === RULES_VERSION)) return null;
+    && !(isDayId(state.dayId) && SUPPORTED_RULES_VERSIONS.includes(state.rulesVersion))) return null;
   return state;
 }
