@@ -54,7 +54,9 @@ Minden új expedíció a magyar naptári nap (Europe/Budapest, téli/nyári idő
 
 A mentés teljes futamállapotot tárol: éjfél után sem változik meg a folyamatban lévő térképed. Korábbi napi expedíció gyakorlóként folytatható; az új expedíció már az aktuális naphoz tartozik. A régi v1-es mentések automatikusan gyakorló mentésként folytatódnak, a pálya, a szereplők és a céhkincstár megmarad. Az eredeti localStorage kulcs változatlan.
 
-`src/daily.js`: napazonosító és verziózott pályagenerátor. `src/save.js`: mentés-visszaállítás és v1 kompatibilitás. A generálás véges számú falelhelyezési próbát végez, és csak összefüggő járható területet tart meg.
+`src/daily.js`: napazonosító és verziózott pályagenerátor. `src/save.js`: mentés-visszaállítás és v1 kompatibilitás. Az új, 2-es pályaszabály három, legalább 3×3-as termet kapcsol össze szűk, elágazó folyosókkal; a napi seed változtatja a termek méretét/helyét és a folyosók nyomvonalát. A 17×13 pályaméret egyelőre megmarad. Az 1-es falelhelyezés explicit generátorverzióval továbbra is reprodukálható.
+
+A korábbi 1-es pályaszabályú napi mentések az eredeti teljes térképpel és haladással folytathatók. Azonos napon is „korábbi pályaszabály” jelzésű gyakorlók; csak új expedíció vált az aktuális napra és 2-es pályaszabályra, a bank megőrzésével. A mentésformátum version=2 értéke változatlan. Részletek és integrációs terv: [termek és folyosók](docs/ROOM_DUNGEONS.md).
 
 ## Mentés átvitele másik eszközre
 
