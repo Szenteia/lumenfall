@@ -47,3 +47,13 @@
 .save-transfer{margin-top:20px;border-top:1px solid #526174;padding-top:12px}.save-transfer h3{margin:0 0 8px}.save-transfer p{font-size:13px;overflow-wrap:anywhere}.save-transfer button{width:100%}.import-dialog{box-sizing:border-box;width:min(540px,calc(100% - 24px));max-height:calc(100dvh - 24px);overflow:auto}.import-dialog h2{font-size:22px}.import-dialog input{display:block;max-width:100%;margin:12px 0}.import-dialog button{display:block;width:100%;margin-top:10px;white-space:normal}.import-dialog p{overflow-wrap:anywhere}.import-dialog::backdrop{background:#071019cc}
 
 .movement-preview{width:100%;min-width:0;margin:10px 0;padding:12px;border:1px solid #435d70;border-radius:9px;background:#192733;overflow-wrap:anywhere}.movement-preview h3{font-size:14px;line-height:1.5;margin:0 0 8px;color:#d6e6ed}.movement-preview p{font-size:13px;line-height:1.5;margin:6px 0;color:#ccd9e0}.movement-preview .is-fatal{color:#ffb7be;font-weight:700}.movement-preview .movement-hint{font-size:12px;color:#acbecb}
+
+/* The one unchanged-resolution Canvas scrolls inside a bounded map viewport. */
+.map-panel{min-width:0;max-width:100%;align-self:start}
+.map-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.map-controls button{min-width:44px;min-height:44px;margin:0}
+.map-controls span{font-size:13px;color:#b8d5df}
+.map-help{font-size:12px;line-height:1.5;margin:8px 0;color:#acbecb}
+.map-viewport{width:100%;aspect-ratio:17/13;overflow:auto;border:0;box-shadow:inset 0 0 0 1px #3d4c60;border-radius:12px;background:#10151f;scroll-behavior:auto}
+.map-viewport:focus-visible{outline:3px solid #f0cf83;outline-offset:2px}
+.map-viewport canvas{display:block;max-width:none;width:100%;height:auto;border:0;border-radius:0}
