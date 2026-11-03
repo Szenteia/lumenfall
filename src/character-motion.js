@@ -13,7 +13,11 @@ export function motionPose(action, elapsed) {
   return { x:action.from.x+(action.to.x-action.from.x)*eased,
     y:action.from.y+(action.to.y-action.from.y)*eased,dx:action.dx,dy:action.dy,
     bob:action.kind==='move'?Math.sin(t*Math.PI)*2:0,
-    swing:action.kind==='attack'&&t<1?t:null };
+    swing:action.kind==='attack'&&t<1?t:null,
+    guards:(action.guards||[]).map(({enemy,from,to})=>{
+      const progress=Math.max(0,Math.min(1,elapsed/MOVE_MS)),ease=progress*progress*(3-2*progress);
+      return {enemy,x:from.x+(to.x-from.x)*ease,y:from.y+(to.y-from.y)*ease};
+    }) };
 }
 
 export function createCharacterMotion({render, requestFrame, cancelFrame, now, reducedMotion=()=>false}) {
@@ -28,6 +32,8 @@ export function createCharacterMotion({render, requestFrame, cancelFrame, now, r
     if(reducedMotion()||typeof requestFrame!=='function'||typeof cancelFrame!=='function') {render(null);return;}
     // Copy primitives: the subsequently mutated game state is never an animation source.
     action={...action,from:{...action.from},to:{...action.to}};
+    action.guards=(action.guards||[]).map(g=>({...g,from:{...g.from},to:{...g.to}}));
+    if(action.kind==='guards'&&!action.guards.length){render(null);return;}
     const token=generation,start=now(),duration=action.kind==='attack'?ATTACK_MS:MOVE_MS;
     render(motionPose(action,0));
     const tick=()=>{

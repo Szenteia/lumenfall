@@ -43,6 +43,10 @@ Hibás vagy nem támogatott mentésnél a játék nem kezdi automatikusan felül
 
 `src/game.js`: böngészőtől független játékszabályok. `src/main.js`: input, canvas, mentés. `style.css`: reszponzív UI. `tests/`: Node tesztek. `docs/`: termékterv és napi fejlesztési rend.
 
+## Őrzők lépésanimációja
+
+Az őrzők tényleges helyváltoztatása rövid, legfeljebb 180 ms-os átmenettel jelenik meg, várakozás és sikeres gyógyítás után is. A HP-jelzés velük mozog. A kör, a HUD és a mentés azonnal frissül; a következő akció bármikor végrehajtható. Csökkentett mozgás mellett statikus megjelenítés van, üresjáratban nincs renderciklus. A mentés és a harci szabályok változatlanok. Működés és kézi tesztterv: [őrzőmozgás](docs/GUARD_MOVEMENT.md).
+
 ## Vizuális irány
 
 Eredeti anime fantasy: indigókék kő, halvány arany céhpecsétek, türkiz lámpásmágia, kézzel rajzolt karakterportrék későbbi asset fázisban. Saját világ, céhek, karakterek és történetek. DanMachi hangulati inspiráció: a város és a mélység kapcsolata, kalandozói fejlődés, céhösszetartás. Dungeon Stalkers mechanikai inspiráció: zsákmány és kijutási kockázat. Saját megkülönböztető elem: a lámpás fénye erősebb jutalmat fed fel, de az őrzők is hamarabb észlelnek.

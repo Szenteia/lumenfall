@@ -1,4 +1,5 @@
 import{drawAdventurer}from'./character.js';
+import{captureGuards,describeSceneMotion,drawMovingGuard}from'./guard-motion.js';
 import{createCharacterMotion,describeDirection}from'./character-motion.js';
 import{readStartup}from'./recovery.js';
 import{mountRecovery}from'./recovery-view.js';
@@ -31,7 +32,9 @@ function drawScene(pose=null){
  for(let y=0;y<H;y++)for(let x=0;x<W;x++){const wall=state.tiles[y*W+x];ctx.fillStyle=wall?'#293746':(x+y)%2?'#161f2c':'#1a2532';ctx.fillRect(x*size+1,y*size+1,size-2,size-2);if(wall){ctx.fillStyle='#3b4a59';ctx.fillRect(x*size+1,y*size+1,size-2,4);}}
  drawWaitTargets(ctx,forecast,size);
  const glyph=(x,y,text,color)=>{ctx.fillStyle=color;ctx.font='25px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x*size+size/2,y*size+size/2);};
- glyph(2,6,'◎','#7fe3cf');for(const c of state.chests)glyph(c.x,c.y,'◆','#edc473');for(const e of state.enemies){glyph(e.x,e.y,'♟','#dd7c87');ctx.fillStyle='#e9a2a9';ctx.fillRect(e.x*size+9,e.y*size+34,e.hp*2,3);}drawAdventurer(ctx,pose||{x:state.x,y:state.y,...facing},size);
+ glyph(2,6,'◎','#7fe3cf');for(const c of state.chests)glyph(c.x,c.y,'◆','#edc473');
+ for(const e of state.enemies)drawMovingGuard(ctx,e,pose,size,()=>{glyph(e.x,e.y,'♟','#dd7c87');ctx.fillStyle='#e9a2a9';ctx.fillRect(e.x*size+9,e.y*size+34,e.hp*2,3);});
+ drawAdventurer(ctx,pose||{x:state.x,y:state.y,...facing},size);
 }
 function draw(){
  motion.cancel(false);
@@ -46,7 +49,7 @@ function draw(){
 let transfer={isOpen:()=>false},transferMounted=false;
 function ensureTransfer(){if(transferMounted)return;transfer=mountTransfer({getState:()=>state,applyState:loaded=>{state=loaded;facing={dx:0,dy:1};saveError=false;draw();},storage:()=>localStorage,onOpen:()=>motion.cancel(),parent:$('aside')});transferMounted=true;}
 if(state)ensureTransfer();
-function act(fn){if(!state||$('#paused').open||transfer.isOpen())return;motion.cancel(false);const animation=fn();save();draw();if(animation?.kind)motion.begin(animation);}
+function act(fn){if(!state||$('#paused').open||transfer.isOpen())return;motion.cancel(false);const before=captureGuards(state),playerAction=fn(),animation=describeSceneMotion(before,state,playerAction,facing);save();draw();if(animation)motion.begin(animation);}
 function move(dx,dy){act(()=>{const animation=describeDirection(state,dx,dy);if(!step(state,dx,dy))return;facing={dx,dy};return {...animation,to:{x:state.x,y:state.y}};});}
 const dirs={ArrowUp:[0,-1],w:[0,-1],ArrowDown:[0,1],s:[0,1],ArrowLeft:[-1,0],a:[-1,0],ArrowRight:[1,0],d:[1,0]};
 window.addEventListener('keydown',e=>{if(!state||transfer.isOpen()||$('#paused').open)return;if(e.repeat||e.altKey||e.ctrlKey||e.metaKey)return;const dir=dirs[e.key]||dirs[e.key.toLowerCase()];if(dir){e.preventDefault();move(...dir);}});
