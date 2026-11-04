@@ -1,3 +1,4 @@
+import{createDungeonBackground}from'./environment.js';
 import{drawAdventurer}from'./character.js';
 import{captureGuards,describeSceneMotion,drawMovingGuard}from'./guard-motion.js';
 import{createCharacterMotion,describeDirection}from'./character-motion.js';
@@ -9,8 +10,10 @@ import{mountWaitPreview,drawWaitTargets}from'./tactics-view.js';
 import{W,H,createGame,step,heal,rest,extract,nextRun}from'./game.js';
 import{expeditionLabel}from'./daily.js';
 import{SAVE_KEY}from'./save.js';
+import{mountMapView}from'./map-view.js';
 import{mountGateDistance}from'./gate-view.js';
 import{mountMovementPreview}from'./movement-view.js';
+import{drawGuard,drawGuardImpact}from'./guard.js';
 const $=s=>document.querySelector(s),key=SAVE_KEY;
 const startup=readStartup(()=>localStorage);
 let state=startup.kind==='valid'?startup.state:startup.kind==='missing'?createGame():null,saveError=false;
@@ -18,7 +21,9 @@ const canvas=$('#game'),ctx=canvas.getContext('2d'),size=40;canvas.width=W*size;
 const renderWaitPreview=mountWaitPreview($('#wait'));
 const renderGateDistance=mountGateDistance($('#extract'));
 const renderMovementPreview=mountMovementPreview($('#heal'));
+const mapView=mountMapView({canvas,viewport:$('#mapViewport'),controls:$('#mapControls'),minus:$('#mapMinus'),plus:$('#mapPlus'),fit:$('#mapFit'),status:$('#mapZoom'),getState:()=>state,columns:W,rows:H});
 function save(){if(!state)return;try{localStorage.setItem(key,JSON.stringify(state));saveError=false;}catch{saveError=true;}}
+const background=createDungeonBackground();
 let forecast=null,facing={dx:0,dy:1};
 const motionPreference=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
 const motion=createCharacterMotion({render:drawScene,
@@ -29,18 +34,19 @@ motionPreference?.addEventListener?.('change',()=>motion.cancel());
 function drawScene(pose=null){
  ctx.clearRect(0,0,canvas.width,canvas.height);
  if(!state)return;
- for(let y=0;y<H;y++)for(let x=0;x<W;x++){const wall=state.tiles[y*W+x];ctx.fillStyle=wall?'#293746':(x+y)%2?'#161f2c':'#1a2532';ctx.fillRect(x*size+1,y*size+1,size-2,size-2);if(wall){ctx.fillStyle='#3b4a59';ctx.fillRect(x*size+1,y*size+1,size-2,4);}}
+ background.paint(ctx);
  drawWaitTargets(ctx,forecast,size);
  const glyph=(x,y,text,color)=>{ctx.fillStyle=color;ctx.font='25px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x*size+size/2,y*size+size/2);};
  glyph(2,6,'◎','#7fe3cf');for(const c of state.chests)glyph(c.x,c.y,'◆','#edc473');
- for(const e of state.enemies)drawMovingGuard(ctx,e,pose,size,()=>{glyph(e.x,e.y,'♟','#dd7c87');ctx.fillStyle='#e9a2a9';ctx.fillRect(e.x*size+9,e.y*size+34,e.hp*2,3);});
- drawAdventurer(ctx,pose||{x:state.x,y:state.y,...facing},size);
+ for(const e of state.enemies)drawMovingGuard(ctx,e,pose,size,()=>drawGuard(ctx,e,pose?.hit,size));
+ drawGuardImpact(ctx,pose?.hit,size);drawAdventurer(ctx,pose||{x:state.x,y:state.y,...facing},size);
 }
 function draw(){
- motion.cancel(false);
+ motion.cancel(false);mapView.update(state);
  if(!state){drawScene();$('#log').textContent='A játék a korábbi mentés védelme miatt vár.';return;}
  renderGateDistance(state);renderMovementPreview(state);
- $('#expedition').textContent=expeditionLabel(state);
+ const environment=background.prepare(state);
+ $('#expedition').textContent=expeditionLabel(state)+' · '+environment.name;
  forecast=previewWait(state);renderWaitPreview(forecast);
  drawScene();
  $('#health').textContent=`♥ ${state.hp}/${state.maxHp} · Ital: ${state.potions}`;$('#loot').textContent=`◆ Zsákmány: ${state.loot}`;$('#bank').textContent=`✦ Céhkincstár: ${state.bank}`;$('#log').textContent=saveError?'A mentés nem sikerült. Engedélyezd a böngésző helyi tárolóját.':state.log;
@@ -50,9 +56,9 @@ let transfer={isOpen:()=>false},transferMounted=false;
 function ensureTransfer(){if(transferMounted)return;transfer=mountTransfer({getState:()=>state,applyState:loaded=>{state=loaded;facing={dx:0,dy:1};saveError=false;draw();},storage:()=>localStorage,onOpen:()=>motion.cancel(),parent:$('aside')});transferMounted=true;}
 if(state)ensureTransfer();
 function act(fn){if(!state||$('#paused').open||transfer.isOpen())return;motion.cancel(false);const before=captureGuards(state),playerAction=fn(),animation=describeSceneMotion(before,state,playerAction,facing);save();draw();if(animation)motion.begin(animation);}
-function move(dx,dy){act(()=>{const animation=describeDirection(state,dx,dy);if(!step(state,dx,dy))return;facing={dx,dy};return {...animation,to:{x:state.x,y:state.y}};});}
+function move(dx,dy){act(()=>{const target=state.enemies.find(e=>e.x===state.x+dx&&e.y===state.y+dy),animation=describeDirection(state,dx,dy);if(!step(state,dx,dy))return;facing={dx,dy};return {...animation,hit:animation.target?{...animation.target,survived:state.enemies.includes(target)}:null,to:{x:state.x,y:state.y}};});}
 const dirs={ArrowUp:[0,-1],w:[0,-1],ArrowDown:[0,1],s:[0,1],ArrowLeft:[-1,0],a:[-1,0],ArrowRight:[1,0],d:[1,0]};
-window.addEventListener('keydown',e=>{if(!state||transfer.isOpen()||$('#paused').open)return;if(e.repeat||e.altKey||e.ctrlKey||e.metaKey)return;const dir=dirs[e.key]||dirs[e.key.toLowerCase()];if(dir){e.preventDefault();move(...dir);}});
+window.addEventListener('keydown',e=>{if(mapView.ownsTarget(e.target))return;if(!state||transfer.isOpen()||$('#paused').open)return;if(e.repeat||e.altKey||e.ctrlKey||e.metaKey)return;const dir=dirs[e.key]||dirs[e.key.toLowerCase()];if(dir){e.preventDefault();move(...dir);}});
 document.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>move(...b.dataset.dir.split(',').map(Number)));
 $('#heal').onclick=()=>act(()=>heal(state));$('#wait').onclick=()=>act(()=>rest(state));$('#extract').onclick=()=>act(()=>extract(state));$('#next').onclick=()=>act(()=>{state=nextRun(state);facing={dx:0,dy:1};});
 $('#pause').onclick=()=>{if(!state)return;save();draw();$('#saveState').textContent=saveError?'A mentés nem sikerült; ne zárd be ezt a lapot.':'Elmentve. Ezen az eszközön és böngészőben innen folytathatod.';$('#paused').showModal();};$('#resume').onclick=()=>{$('#paused').close();draw();};document.addEventListener('visibilitychange',()=>{if(!state)return;if(document.hidden){motion.cancel();save();if(!$('#paused').open&&!transfer.isOpen())$('#paused').showModal();}else draw();});

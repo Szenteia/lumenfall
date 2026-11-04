@@ -39,6 +39,12 @@ Ez működő egyjátékos prototípus, nem kész online játék. Naponként vál
 
 Hibás vagy nem támogatott mentésnél a játék nem kezdi automatikusan felülírni a korábbi adatot. A helyreállítási ablakban letöltheted az eredeti szöveget biztonsági másolatként, vagy újrapróbálhatod az olvasást. Ez a nyers másolat nem garantáltan betölthető játékexport. Az újrakezdés külön megerősítést kér, és a céhkincstárat is lecseréli; csak sikeres tárhelyírás után indul el. Tárhelyhiba esetén a játék védetten vár. Escape/Mégse az újrakezdési kérdést vonja vissza; a védelem megmarad.
 
+## Térképnagyítás és pásztázás
+
+A térkép a − / + gombokkal 100%, 150% és 200% méretben nézhető; a „Teljes térkép” visszaállítja az áttekintést. Nagyítva érintéssel, görgetéssel vagy a fókuszált térképnézet nyilaival pásztázhatsz. Amíg a térképnézetre vagy nagyítógombra fókuszálsz, a nyíl/WASD nem mozgatja a kalandozót: használd az eredeti iránygombokat, vagy lépj ki Tab-bal a nézetből a billentyűs játékhoz.
+
+A nézet nagyításváltáskor/import után a játékoshoz igazodik; kézi pásztázás után csak valódi lépésnél, szükség esetén követ. A nagyítás nem változtat játékállapotot vagy mentést. Ez még a meglévő 17×13 pálya közelebbi megjelenítése, a nagyobb dungeonök előkészítése. Működés és kézi próbaterv: [térképnézet](docs/MAP_VIEW.md).
+
 ## Mappák
 
 `src/game.js`: böngészőtől független játékszabályok. `src/main.js`: input, canvas, mentés. `style.css`: reszponzív UI. `tests/`: Node tesztek. `docs/`: termékterv és napi fejlesztési rend.
@@ -58,7 +64,9 @@ Minden új expedíció a magyar naptári nap (Europe/Budapest, téli/nyári idő
 
 A mentés teljes futamállapotot tárol: éjfél után sem változik meg a folyamatban lévő térképed. Korábbi napi expedíció gyakorlóként folytatható; az új expedíció már az aktuális naphoz tartozik. A régi v1-es mentések automatikusan gyakorló mentésként folytatódnak, a pálya, a szereplők és a céhkincstár megmarad. Az eredeti localStorage kulcs változatlan.
 
-`src/daily.js`: napazonosító és verziózott pályagenerátor. `src/save.js`: mentés-visszaállítás és v1 kompatibilitás. A generálás véges számú falelhelyezési próbát végez, és csak összefüggő járható területet tart meg.
+`src/daily.js`: napazonosító és verziózott pályagenerátor. `src/save.js`: mentés-visszaállítás és v1 kompatibilitás. Az új, 2-es pályaszabály három, legalább 3×3-as termet kapcsol össze szűk, elágazó folyosókkal; a napi seed változtatja a termek méretét/helyét és a folyosók nyomvonalát. A 17×13 pályaméret egyelőre megmarad. Az 1-es falelhelyezés explicit generátorverzióval továbbra is reprodukálható.
+
+A korábbi 1-es pályaszabályú napi mentések az eredeti teljes térképpel és haladással folytathatók. Azonos napon is „korábbi pályaszabály” jelzésű gyakorlók; csak új expedíció vált az aktuális napra és 2-es pályaszabályra, a bank megőrzésével. A mentésformátum version=2 értéke változatlan. Részletek és integrációs terv: [termek és folyosók](docs/ROOM_DUNGEONS.md).
 
 ## Mentés átvitele másik eszközre
 
@@ -66,8 +74,20 @@ A **Mentés letöltése** gomb JSON biztonsági másolatot készít az aktuális
 
 Legfeljebb 64 KiB-os Lumenfall export fogadható el. A korábbi v1 játékállapotot tartalmazó, azonosított export is migrálható; egy csupasz localStorage JSON nem exportfájl. Régebbi napi expedíció a saját pályáján, gyakorlóként folytatódik. Nincs automatikus felhőszinkronizálás vagy fájlfeltöltés. A helyi mentés és az importált pontszám nem hitelesített ranglistaeredmény. A letöltési visszajelzés a böngészőnek átadott kérést jelzi; a fájl tényleges mentését a letöltéseknél ellenőrizd.
 
+## Eredeti Kristályőrök
+
+A három meglévő őrző saját anime/chibi Kristályőr-grafikát használ: sötét páncél, lila köpeny, jellegzetes sisak és rózsás kristályrészlet. A HP-sáv az aktuális életerőt mutatja. Ez vizuális megjelenés, nem új képességű ellenféltípus.
+
+A valódi kardtalálat rövid reakciót ad a túlélő őrzőnek; legyőzésekor csak becsapódásjelzés látható az üresen maradt mezőn. A jelzés a meglévő 220 ms-os kardcsapáshoz kötődik. A kör és mentés azonnali, csökkentett mozgás mellett statikus a megjelenés. Az őrzők mozgás-/visszatámadás-animációja még külön későbbi lépés. Részletek: [Kristályőr](docs/CRYSTAL_GUARD.md).
+
 ## Saját kalandozó és rövid animációk
 
 A játékos eredeti anime/chibi lámpáscéhes kalandozóként jelenik meg: türkiz köpeny, saját hajsziluett, lámpás és kard. A sikeres lépés 180 ms-os átmenetet, a támadás 220 ms-os kardívet kap. A kör és a mentés azonnal frissül; az animáció nem késlelteti a következő akciót. Üresjáratban nem fut rajzolási ciklus. A rendszer csökkentett mozgás beállításával statikus megjelenést használ; a mentésformátum változatlan.
 
 A nagyobb, változatosabb dungeonök és további eredeti animált szereplők fejlesztési irányait a [termékterv](docs/ROADMAP.md) rögzíti. A mai karakterváltozás nem növeli a pályát. Technikai működés és kézi ellenőrzés: [karakteranimáció](docs/CHARACTER_ANIMATION.md).
+
+## Három dungeon-környezet
+
+Az expedíció napjához kötött látvány három eredeti helyszín közül választ: **Ködkő-romok** (hideg pala és kopott, repedt kőlapok), **Borostyáncsarnok** (meleg homokkő és geometrikus berakások), **Kristálykripta** (ibolyás kő és visszafogott kristályerek). A napi/gyakorló jelzés mellett a környezet neve is megjelenik. Ugyanaz a mentett nap minden eszközön ugyanazt a környezetet adja; régi, nap nélküli mentésnél Ködkő-romok az alap.
+
+A látvány a már meglévő pályát díszíti: nem növeli a dungeon méretét, nem módosítja a szobákat, járhatóságot, harcot vagy jutalmakat. Import, újratöltés és éjfél utáni folytatás megőrzi a futam saját környezetét. A háttér egyszer előrajzolódik és újrahasználható, nincs külön környezeti animáció vagy külső assetletöltés. Részletek és ellenőrzési terv: [dungeon-környezetek](docs/DUNGEON_ENVIRONMENTS.md).
