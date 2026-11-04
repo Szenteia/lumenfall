@@ -8,8 +8,8 @@ Stratégiai, megszakítható expedíciók. Saját kalandozó és céhkincstár. 
 
 Tulajdonosi prioritás: nagyobb, látványosabb és változatosabb dungeonök, saját anime stílusú animált szereplőkkel. Eredeti világ és karakterek; ismert anime-szereplők átvétele nélkül. Minden napi feladat egy kicsi, önállóan befejezhető lépés.
 
-1. Eredeti lámpáscéhes kalandozó, rövid lépés- és kardcsapás-animációval (ennek a változásnak a hatóköre). További őrzők, mozgás- és harci megjelenések külön lépésekben.
-2. Eltérő vizuális dungeon-környezetek: saját fal-/padlórészletek, színvilágok és helyszínhangulatok, a taktikai olvashatóság megőrzésével.
+1. Eredeti lámpáscéhes kalandozó, rövid lépés- és kardcsapás-animációval (már a projekt része). További őrzők, mozgás- és harci megjelenések külön lépésekben.
+2. Eltérő vizuális dungeon-környezetek: Ködkő-romok, Borostyáncsarnok és Kristálykripta, saját fal-/padlórészletekkel és színvilággal (ennek a változásnak a hatóköre), a taktikai olvashatóság megőrzésével.
 3. Pályaméret növelése verziózott, mentéskompatibilis módon; előtte a fix 17×13 feltételezések és mobilos kamera/zoom/pan kezelése. A régi expedíció nem generálódhat újra.
 4. Eltérő terem- és útvonalstruktúrák, összefüggő bejárhatósággal, elérhető kijárattal és zsákmánnyal, determinisztikus napi feltételekkel.
 

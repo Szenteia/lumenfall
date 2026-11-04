@@ -67,3 +67,9 @@ Legfeljebb 64 KiB-os Lumenfall export fogadható el. A korábbi v1 játékállap
 A játékos eredeti anime/chibi lámpáscéhes kalandozóként jelenik meg: türkiz köpeny, saját hajsziluett, lámpás és kard. A sikeres lépés 180 ms-os átmenetet, a támadás 220 ms-os kardívet kap. A kör és a mentés azonnal frissül; az animáció nem késlelteti a következő akciót. Üresjáratban nem fut rajzolási ciklus. A rendszer csökkentett mozgás beállításával statikus megjelenést használ; a mentésformátum változatlan.
 
 A nagyobb, változatosabb dungeonök és további eredeti animált szereplők fejlesztési irányait a [termékterv](docs/ROADMAP.md) rögzíti. A mai karakterváltozás nem növeli a pályát. Technikai működés és kézi ellenőrzés: [karakteranimáció](docs/CHARACTER_ANIMATION.md).
+
+## Három dungeon-környezet
+
+Az expedíció napjához kötött látvány három eredeti helyszín közül választ: **Ködkő-romok** (hideg pala és kopott, repedt kőlapok), **Borostyáncsarnok** (meleg homokkő és geometrikus berakások), **Kristálykripta** (ibolyás kő és visszafogott kristályerek). A napi/gyakorló jelzés mellett a környezet neve is megjelenik. Ugyanaz a mentett nap minden eszközön ugyanazt a környezetet adja; régi, nap nélküli mentésnél Ködkő-romok az alap.
+
+A látvány a már meglévő pályát díszíti: nem növeli a dungeon méretét, nem módosítja a szobákat, járhatóságot, harcot vagy jutalmakat. Import, újratöltés és éjfél utáni folytatás megőrzi a futam saját környezetét. A háttér egyszer előrajzolódik és újrahasználható, nincs külön környezeti animáció vagy külső assetletöltés. Részletek és ellenőrzési terv: [dungeon-környezetek](docs/DUNGEON_ENVIRONMENTS.md).
