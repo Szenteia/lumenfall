@@ -1,5 +1,6 @@
 // Integration contract with the actual main.js; deliberately not a browser test.
 import test from 'node:test';
+import {readFileSync} from 'node:fs';
 import assert from 'node:assert/strict';
 import { createGame } from '../src/game.js';
 import { exportSave } from '../src/transfer.js';
@@ -35,9 +36,14 @@ test('Actual main wiring refreshes previews after keyboard, touch, healing, impo
     nodes['#pause'].onclick();const before=storage.value;touches[1].onclick();assert.equal(storage.value,before);nodes['#resume'].onclick();
     const transfer=nodes.aside.children[0],dialog=document.body.children[0];
     transfer.children[2].onclick();touches[1].onclick();assert.equal(storage.value,before);
+    const oldRules=JSON.parse(readFileSync(new URL('./fixtures/rules1-save.json',import.meta.url),'utf8'));
+    const oldFile=exportSave(oldRules).text,oldInput=dialog.children[2].children[0];
+    oldInput.files=[{size:oldFile.length,text:async()=>oldFile}];await oldInput.onchange();dialog.children[4].onclick();
+    assert.deepEqual(JSON.parse(storage.value),oldRules);assert.match(nodes['#expedition'].textContent,/korábbi pályaszabály/);
+    transfer.children[2].onclick();
     const imported=createGame({dayId:'2026-10-25'});imported.x=3;imported.hp=10;imported.bank=85;imported.enemies=[];
     const file=exportSave(imported).text,input=dialog.children[2].children[0];input.files=[{size:file.length,text:async()=>file}];await input.onchange();
-    assert.equal(storage.value,before);dialog.children[4].onclick();
+    assert.deepEqual(JSON.parse(storage.value),oldRules);dialog.children[4].onclick();
     assert.match(rows[1].textContent,/10 HP/);assert.match(nodes['#bank'].textContent,/85/);assert.match(nodes['#expedition'].textContent,/Gyakorló/);
     assert.deepEqual(JSON.parse(storage.value),imported);
     nodes['#heal'].onclick();assert.match(rows[1].textContent,/20 HP/);assert.equal(JSON.parse(storage.value).potions,1);

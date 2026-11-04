@@ -15,6 +15,10 @@ Tulajdonosi prioritás: nagyobb, látványosabb és változatosabb dungeonök, s
 
 Gyors betöltés, mobil/desktop teljesítmény és mentéskompatibilitás minden lépés követelménye. A fenti sorrend munkairány, nem a még hiányzó funkciók elkészültének állítása. Valódi mobil- és több-böngészős próbák továbbra is szükségesek.
 
+## Termek és folyosók · első szerkezeti lépés
+
+Az új, 2-es pályaszabály három külön termet kapcsol össze szűk, elágazó folyosókkal, napi seed alapján változó nyomvonallal és teremméretekkel. Ez a terem-/útvonalstruktúra első bővítése, még 17×13 méretben; nagyobb térkép és mobilos kamera továbbra is külön lépés. Az 1-es pályaszabályú és örökölt mentések saját térképpel folytathatók; új expedíció kapja a 2-es szabályt.
+
 ## További tervezett lépések
 
 - Lámpásmechanika: fényerő–észlelés–jutalom döntés; átlátható ellenséges szándékok.
