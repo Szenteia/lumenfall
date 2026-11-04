@@ -39,6 +39,12 @@ Ez működő egyjátékos prototípus, nem kész online játék. Naponként vál
 
 Hibás vagy nem támogatott mentésnél a játék nem kezdi automatikusan felülírni a korábbi adatot. A helyreállítási ablakban letöltheted az eredeti szöveget biztonsági másolatként, vagy újrapróbálhatod az olvasást. Ez a nyers másolat nem garantáltan betölthető játékexport. Az újrakezdés külön megerősítést kér, és a céhkincstárat is lecseréli; csak sikeres tárhelyírás után indul el. Tárhelyhiba esetén a játék védetten vár. Escape/Mégse az újrakezdési kérdést vonja vissza; a védelem megmarad.
 
+## Térképnagyítás és pásztázás
+
+A térkép a − / + gombokkal 100%, 150% és 200% méretben nézhető; a „Teljes térkép” visszaállítja az áttekintést. Nagyítva érintéssel, görgetéssel vagy a fókuszált térképnézet nyilaival pásztázhatsz. Amíg a térképnézetre vagy nagyítógombra fókuszálsz, a nyíl/WASD nem mozgatja a kalandozót: használd az eredeti iránygombokat, vagy lépj ki Tab-bal a nézetből a billentyűs játékhoz.
+
+A nézet nagyításváltáskor/import után a játékoshoz igazodik; kézi pásztázás után csak valódi lépésnél, szükség esetén követ. A nagyítás nem változtat játékállapotot vagy mentést. Ez még a meglévő 17×13 pálya közelebbi megjelenítése, a nagyobb dungeonök előkészítése. Működés és kézi próbaterv: [térképnézet](docs/MAP_VIEW.md).
+
 ## Mappák
 
 `src/game.js`: böngészőtől független játékszabályok. `src/main.js`: input, canvas, mentés. `style.css`: reszponzív UI. `tests/`: Node tesztek. `docs/`: termékterv és napi fejlesztési rend.
