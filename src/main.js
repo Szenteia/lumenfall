@@ -11,6 +11,7 @@ import{expeditionLabel}from'./daily.js';
 import{SAVE_KEY}from'./save.js';
 import{mountGateDistance}from'./gate-view.js';
 import{mountMovementPreview}from'./movement-view.js';
+import{drawGuard,drawGuardImpact}from'./guard.js';
 const $=s=>document.querySelector(s),key=SAVE_KEY;
 const startup=readStartup(()=>localStorage);
 let state=startup.kind==='valid'?startup.state:startup.kind==='missing'?createGame():null,saveError=false;
@@ -33,7 +34,7 @@ function drawScene(pose=null){
  background.paint(ctx);
  drawWaitTargets(ctx,forecast,size);
  const glyph=(x,y,text,color)=>{ctx.fillStyle=color;ctx.font='25px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x*size+size/2,y*size+size/2);};
- glyph(2,6,'◎','#7fe3cf');for(const c of state.chests)glyph(c.x,c.y,'◆','#edc473');for(const e of state.enemies){glyph(e.x,e.y,'♟','#dd7c87');ctx.fillStyle='#e9a2a9';ctx.fillRect(e.x*size+9,e.y*size+34,e.hp*2,3);}drawAdventurer(ctx,pose||{x:state.x,y:state.y,...facing},size);
+ glyph(2,6,'◎','#7fe3cf');for(const c of state.chests)glyph(c.x,c.y,'◆','#edc473');for(const e of state.enemies)drawGuard(ctx,e,pose?.hit,size);drawGuardImpact(ctx,pose?.hit,size);drawAdventurer(ctx,pose||{x:state.x,y:state.y,...facing},size);
 }
 function draw(){
  motion.cancel(false);
@@ -50,7 +51,7 @@ let transfer={isOpen:()=>false},transferMounted=false;
 function ensureTransfer(){if(transferMounted)return;transfer=mountTransfer({getState:()=>state,applyState:loaded=>{state=loaded;facing={dx:0,dy:1};saveError=false;draw();},storage:()=>localStorage,onOpen:()=>motion.cancel(),parent:$('aside')});transferMounted=true;}
 if(state)ensureTransfer();
 function act(fn){if(!state||$('#paused').open||transfer.isOpen())return;motion.cancel(false);const animation=fn();save();draw();if(animation?.kind)motion.begin(animation);}
-function move(dx,dy){act(()=>{const animation=describeDirection(state,dx,dy);if(!step(state,dx,dy))return;facing={dx,dy};return {...animation,to:{x:state.x,y:state.y}};});}
+function move(dx,dy){act(()=>{const target=state.enemies.find(e=>e.x===state.x+dx&&e.y===state.y+dy),animation=describeDirection(state,dx,dy);if(!step(state,dx,dy))return;facing={dx,dy};return {...animation,hit:animation.target?{...animation.target,survived:state.enemies.includes(target)}:null,to:{x:state.x,y:state.y}};});}
 const dirs={ArrowUp:[0,-1],w:[0,-1],ArrowDown:[0,1],s:[0,1],ArrowLeft:[-1,0],a:[-1,0],ArrowRight:[1,0],d:[1,0]};
 window.addEventListener('keydown',e=>{if(!state||transfer.isOpen()||$('#paused').open)return;if(e.repeat||e.altKey||e.ctrlKey||e.metaKey)return;const dir=dirs[e.key]||dirs[e.key.toLowerCase()];if(dir){e.preventDefault();move(...dir);}});
 document.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>move(...b.dataset.dir.split(',').map(Number)));

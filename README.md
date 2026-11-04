@@ -64,6 +64,12 @@ A **Mentés letöltése** gomb JSON biztonsági másolatot készít az aktuális
 
 Legfeljebb 64 KiB-os Lumenfall export fogadható el. A korábbi v1 játékállapotot tartalmazó, azonosított export is migrálható; egy csupasz localStorage JSON nem exportfájl. Régebbi napi expedíció a saját pályáján, gyakorlóként folytatódik. Nincs automatikus felhőszinkronizálás vagy fájlfeltöltés. A helyi mentés és az importált pontszám nem hitelesített ranglistaeredmény. A letöltési visszajelzés a böngészőnek átadott kérést jelzi; a fájl tényleges mentését a letöltéseknél ellenőrizd.
 
+## Eredeti Kristályőrök
+
+A három meglévő őrző saját anime/chibi Kristályőr-grafikát használ: sötét páncél, lila köpeny, jellegzetes sisak és rózsás kristályrészlet. A HP-sáv az aktuális életerőt mutatja. Ez vizuális megjelenés, nem új képességű ellenféltípus.
+
+A valódi kardtalálat rövid reakciót ad a túlélő őrzőnek; legyőzésekor csak becsapódásjelzés látható az üresen maradt mezőn. A jelzés a meglévő 220 ms-os kardcsapáshoz kötődik. A kör és mentés azonnali, csökkentett mozgás mellett statikus a megjelenés. Az őrzők mozgás-/visszatámadás-animációja még külön későbbi lépés. Részletek: [Kristályőr](docs/CRYSTAL_GUARD.md).
+
 ## Saját kalandozó és rövid animációk
 
 A játékos eredeti anime/chibi lámpáscéhes kalandozóként jelenik meg: türkiz köpeny, saját hajsziluett, lámpás és kard. A sikeres lépés 180 ms-os átmenetet, a támadás 220 ms-os kardívet kap. A kör és a mentés azonnal frissül; az animáció nem késlelteti a következő akciót. Üresjáratban nem fut rajzolási ciklus. A rendszer csökkentett mozgás beállításával statikus megjelenést használ; a mentésformátum változatlan.
