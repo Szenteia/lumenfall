@@ -1,10 +1,11 @@
 import { rest } from './game.js';
+import { dungeonGrid } from './dungeon-grid.js';
 
 // Simulate the real wait action on a detached copy of the persisted game state.
-export function previewWait(state) {
-  if (state.status !== 'active') return null;
+export function previewWait(state, size) {
+  if (state.status !== 'active' || !dungeonGrid(state.tiles, size)) return null;
   const after = JSON.parse(JSON.stringify(state));
-  rest(after);
+  rest(after, size);
   return {
     hpAfter: after.hp,
     damage: Math.max(0, state.hp - after.hp),
