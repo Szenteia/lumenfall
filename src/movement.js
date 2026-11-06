@@ -1,4 +1,5 @@
 import { step } from './game.js';
+import { dungeonGrid } from './dungeon-grid.js';
 
 export const DIRECTIONS = Object.freeze([
   Object.freeze({ id: 'up', label: 'Fel', dx: 0, dy: -1 }),
@@ -8,13 +9,13 @@ export const DIRECTIONS = Object.freeze([
 ]);
 
 // Each direction is an alternative single action, starting from the same live state.
-export function previewDirections(state) {
-  if (state.status !== 'active') return null;
+export function previewDirections(state, size) {
+  if (state.status !== 'active' || !dungeonGrid(state.tiles, size)) return null;
   return DIRECTIONS.map(direction => {
     const after = JSON.parse(JSON.stringify(state));
     const targetX = state.x + direction.dx, targetY = state.y + direction.dy;
     const enemy = state.enemies.some(e => e.x === targetX && e.y === targetY);
-    const acted = step(after, direction.dx, direction.dy);
+    const acted = step(after, direction.dx, direction.dy, size);
     return {
       ...direction,
       kind: !acted ? 'blocked' : enemy ? 'attack' : 'move',
