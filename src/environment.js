@@ -1,4 +1,5 @@
-import {W,H,isDayId} from './daily.js';
+import {isDayId} from './daily.js';
+import {dungeonGrid} from './dungeon-grid.js';
 
 // Visual version 1: deliberately independent of the versioned gameplay PRNG.
 // Keep order/selection stable so an old expedition retains its surroundings.
@@ -15,13 +16,16 @@ export function environmentFor(dayId) {
   return ENVIRONMENTS[hash%ENVIRONMENTS.length];
 }
 
-export function drawDungeon(ctx, tiles, theme, size=40) {
+export function drawDungeon(ctx, tiles, theme, size=40, layout) {
+  const grid=dungeonGrid(tiles,layout);
+  if(!grid)return;
+  const {width,height}=grid;
   ctx.save();
-  ctx.fillStyle=theme.edge;ctx.fillRect(0,0,W*size,H*size);
+  ctx.fillStyle=theme.edge;ctx.fillRect(0,0,width*size,height*size);
   ctx.lineWidth=Math.max(1,size/40);
   const line=(color,points)=>{ctx.strokeStyle=color;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();};
-  for(let y=0;y<H;y++)for(let x=0;x<W;x++) {
-    const wall=tiles[y*W+x]===1,left=x*size,top=y*size,unit=size/40;
+  for(let y=0;y<height;y++)for(let x=0;x<width;x++) {
+    const wall=tiles[y*width+x]===1,left=x*size,top=y*size,unit=size/40;
     ctx.save();ctx.translate(left,top);ctx.scale(unit,unit);
     ctx.fillStyle=wall?theme.wall:((x+y)%2?theme.floor:theme.floorAlt);ctx.fillRect(1,1,38,38);
     if(wall) {
@@ -57,17 +61,19 @@ export function drawDungeon(ctx, tiles, theme, size=40) {
 export function createDungeonBackground({createCanvas=()=>document.createElement('canvas'),render=drawDungeon,size=40}={}) {
   let canvas=null,key=null,theme=null;
   return {
-    prepare(state) {
-      if(!state)return null;
-      const nextTheme=environmentFor(state.dayId),nextKey=`${nextTheme.id}:${state.tiles.join('')}`;
+    prepare(state,layout) {
+      const grid=dungeonGrid(state?.tiles,layout);
+      if(!grid){theme=null;return null;}
+      const {width,height}=grid;
+      const nextTheme=environmentFor(state.dayId),nextKey=`${nextTheme.id}:${width}x${height}:${state.tiles.join('')}`;
       if(nextKey!==key) {
         if(!canvas)canvas=createCanvas();
-        canvas.width=W*size;canvas.height=H*size;
-        render(canvas.getContext('2d'),state.tiles,nextTheme,size);
-        key=nextKey;theme=nextTheme;
+        canvas.width=width*size;canvas.height=height*size;
+        render(canvas.getContext('2d'),state.tiles,nextTheme,size,{width,height});
+        key=nextKey;
       }
-      return theme;
+      return theme=nextTheme;
     },
-    paint(ctx){if(canvas)ctx.drawImage(canvas,0,0);},
+    paint(ctx){if(theme)ctx.drawImage(canvas,0,0);},
   };
 }
