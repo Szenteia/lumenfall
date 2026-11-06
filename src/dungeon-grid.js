@@ -15,5 +15,5 @@ export function dungeonGrid(tiles, size = DEFAULT_SIZE) {
     return tiles[index] === 0 ? index : -1;
   }
 
-  return { width, floorIndex };
+  return { width, height, floorIndex };
 }

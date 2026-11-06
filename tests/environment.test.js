@@ -45,3 +45,58 @@ test('Visual rendering does not alter the versioned generator or subsequent game
  const a=daily(),b=daily();for(const theme of ENVIRONMENTS)drawDungeon(recording().ctx,a.tiles,theme);
  for(const dir of [[1,0],[1,0],[0,-1],[-1,0],[0,1]]){assert.equal(step(a,...dir),step(b,...dir));assert.deepEqual(a,b);}
 });
+
+test('Larger backgrounds paint the last row and column with the supplied stride',()=>{
+ const layout=Object.freeze({width:21,height:15}),tiles=Array(315).fill(0);
+ tiles[14*21+20]=1;
+ Object.freeze(tiles);
+ for(const theme of ENVIRONMENTS){
+  const {ctx,calls}=recording();
+  drawDungeon(ctx,tiles,theme,40,layout);
+  assert.deepEqual(calls.find(c=>c[0]==='fillRect'),['fillRect',0,0,840,600]);
+  const painted=calls.flatMap((c,i)=>c[0]==='translate'?[{x:c[1],y:c[2],color:calls[i+2][1]}]:[]);
+  assert.equal(painted.length,315);
+  assert.deepEqual(painted.at(-2),{x:760,y:560,color:theme.floor});
+  assert.deepEqual(painted.at(-1),{x:800,y:560,color:theme.wall});
+  assert.equal(painted.filter(p=>p.color===theme.wall).length,1);
+ }
+});
+
+test('Identical tiles with a different layout refresh the same canvas once',()=>{
+ const state={dayId:null,tiles:Array(315).fill(0)},wide={width:21,height:15},tall={width:15,height:21};
+ const surface={getContext:()=>({})},renders=[];
+ let canvases=0;
+ const cache=createDungeonBackground({
+  createCanvas:()=>{canvases++;return surface;},
+  render(ctx,tiles,theme,size,layout){renders.push([surface.width,surface.height,theme.id,layout]);},
+ });
+ cache.prepare(state,wide);cache.prepare(state,{...wide});
+ cache.prepare(state,tall);cache.prepare(state,{...tall});
+ let blits=0;for(let i=0;i<3;i++)cache.paint({drawImage(canvas){assert.equal(canvas,surface);blits++;}});
+ assert.equal(canvases,1);assert.equal(blits,3);
+ assert.deepEqual(renders,[[840,600,'mist',wide],[600,840,'mist',tall]]);
+ cache.prepare(state,wide);
+ assert.deepEqual(renders.at(-1),[840,600,'mist',wide]);assert.equal(renders.length,3);
+});
+
+test('Invalid geometry does not resize, draw or display a stale cached background',()=>{
+ const layout={width:21,height:15},state={dayId:null,tiles:Array(315).fill(0),...layout};
+ const surface={getContext:()=>({})};
+ let resizes=0,renders=0,blits=0;
+ for(const key of ['width','height'])Object.defineProperty(surface,key,{set(){resizes++;}});
+ const cache=createDungeonBackground({createCanvas:()=>surface,render(){renders++;}});
+ const target={drawImage(){blits++;}};
+ assert.equal(cache.prepare(state),null); // Untrusted state dimensions are ignored.
+ cache.prepare(state,layout);cache.paint(target);
+ for(const [s,size] of [[state,null],[state,{width:21,height:14}],[state,{width:21.5,height:15}],
+   [{...state,tiles:state.tiles.slice(1)},layout],[null,layout]]){
+  assert.equal(cache.prepare(s,size),null);
+  cache.paint(target);
+ }
+ const {ctx,calls}=recording();
+ drawDungeon(ctx,state.tiles,ENVIRONMENTS[0],40,{width:21,height:14});
+ assert.equal(calls.length,0);
+ assert.deepEqual([resizes,renders,blits],[2,1,1]);
+ assert.equal(cache.prepare(state,layout),ENVIRONMENTS[0]);cache.paint(target);
+ assert.deepEqual([resizes,renders,blits],[2,1,2]);
+});
