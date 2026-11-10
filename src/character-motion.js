@@ -17,7 +17,10 @@ export function motionPose(action, elapsed) {
     swing:action.kind==='attack'&&t<1?t:null,
     guards:(action.guards||[]).map(({enemy,from,to})=>{
       const progress=Math.max(0,Math.min(1,elapsed/MOVE_MS)),ease=progress*progress*(3-2*progress);
-      return {enemy,x:from.x+(to.x-from.x)*ease,y:from.y+(to.y-from.y)*ease};
+      // One bounded gait cycle, only during an actual move. Explicit endpoints
+      // keep the resting silhouette exact, including during longer attacks.
+      const stride=progress>0&&progress<1&&(from.x!==to.x||from.y!==to.y)?Math.sin(progress*Math.PI*2):0;
+      return {enemy,x:from.x+(to.x-from.x)*ease,y:from.y+(to.y-from.y)*ease,stride};
     }),
     hit:action.kind==='attack'&&action.hit&&t<1?{...action.hit,dx:action.dx,dy:action.dy,strength:Math.sin(t*Math.PI)}:null };
 }

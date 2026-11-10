@@ -1,16 +1,18 @@
 // Original Crystal Guard: code-native shapes, shared by all existing guards.
 // Hit data is transient presentation only; it never changes an enemy or the game.
-export function drawGuard(ctx, enemy, hit=null, size=40) {
+export function drawGuard(ctx, enemy, hit=null, size=40, stride=0) {
+  const gait=Number.isFinite(stride)?Math.max(-1,Math.min(1,stride)):0;
+  const hem=gait*1.5,foot=gait*2;
   const strength=hit?.survived&&hit.x===enemy.x&&hit.y===enemy.y?hit.strength:0;
   ctx.save();ctx.translate((enemy.x+.5)*size,(enemy.y+.5)*size);ctx.scale(size/40,size/40);
   const polygon=(color,points)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();};
   // Shadow and HP stay anchored while the body recoils at most two pixels.
   ctx.fillStyle='#090d1880';ctx.beginPath();ctx.ellipse(0,12,12,3,0,0,Math.PI*2);ctx.fill();
   ctx.save();ctx.translate((hit?.dx||0)*strength*2,(hit?.dy||0)*strength*2);
-  polygon('#33243f',[[-8,-1],[8,-1],[13,11],[4,10],[0,12],[-12,10]]);
-  polygon('#805978',[[-8,0],[-2,4],[0,11],[-9,9]]);
-  polygon('#a36d8b',[[8,0],[2,4],[0,11],[10,9]]);
-  ctx.fillStyle='#1b2333';ctx.fillRect(-7,9,5,3);ctx.fillRect(3,9,5,3);
+  polygon('#33243f',[[-8,-1],[8,-1],[13+hem,11],[4+hem,10],[hem,12],[-12+hem,10]]);
+  polygon('#805978',[[-8,0],[-2,4],[hem,11],[-9+hem,9]]);
+  polygon('#a36d8b',[[8,0],[2,4],[hem,11],[10+hem,9]]);
+  ctx.fillStyle='#1b2333';ctx.fillRect(-7,9-foot,5,3);ctx.fillRect(3,9+foot,5,3);
   polygon('#546174',[[-8,-2],[8,-2],[6,8],[-6,8]]);
   polygon('#8f9aad',[[-6,-1],[0,2],[6,-1],[4,5],[-4,5]]);
   // Angular helmet, rose crystal crest, visor: a distinct chibi silhouette.
