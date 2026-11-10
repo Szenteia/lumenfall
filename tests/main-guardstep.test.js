@@ -33,10 +33,12 @@ test('Real main animates actual guard moves after direction, wait and heal with 
   nodes['#wait'].onclick();const expected=structuredClone(initial);rest(expected);assert.deepEqual(JSON.parse(storage.value),expected);
   assert.equal(frames.size,1);assert.equal(guardOffsets().length,2);
   const saved=storage.value,writes=storageWrites,hud=domWrites,start=time;
+  tick(start+45);assert.ok(drawing.some(c=>c[0]==='fillRect'&&c[1]===-7&&c[2]===7&&c[3]===5));
   tick(start+90);assert.ok(drawing.some(c=>c[0]==='translate'&&c[1]===20&&c[2]===0));assert.ok(drawing.some(c=>c[0]==='translate'&&c[1]===0&&c[2]===-20));
   assert.equal(storage.value,saved);assert.equal(storageWrites,writes);assert.equal(domWrites,hud);
   // Rest must keep the player still: its only translations are cell center and zero bob.
   assert.deepEqual(translations.at(-2),[340,260]);assert.ok(translations.at(-1).every(n=>n===0));
+  tick(start+135);assert.ok(drawing.some(c=>c[0]==='fillRect'&&c[1]===-7&&c[2]===11&&c[3]===5));
   tick(start+180);assert.equal(frames.size,0);assert.equal(guardOffsets().length,0);
   nodes['#wait'].onclick();assert.equal(frames.size,0); // odd turn, no guard motion
   const healthy=structuredClone(initial);healthy.hp=12;await load(healthy);nodes['#heal'].onclick();const healed=structuredClone(healthy);heal(healed);assert.deepEqual(JSON.parse(storage.value),healed);assert.equal(frames.size,1);tick(time+180);assert.equal(frames.size,0);

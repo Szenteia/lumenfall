@@ -38,7 +38,7 @@ function drawScene(pose=null){
  drawWaitTargets(ctx,forecast,size);
  const glyph=(x,y,text,color)=>{ctx.fillStyle=color;ctx.font='25px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x*size+size/2,y*size+size/2);};
  glyph(2,6,'◎','#7fe3cf');for(const c of state.chests)glyph(c.x,c.y,'◆','#edc473');
- for(const e of state.enemies)drawMovingGuard(ctx,e,pose,size,()=>drawGuard(ctx,e,pose?.hit,size));
+ for(const e of state.enemies)drawMovingGuard(ctx,e,pose,size,stride=>drawGuard(ctx,e,pose?.hit,size,stride));
  drawGuardImpact(ctx,pose?.hit,size);drawAdventurer(ctx,pose||{x:state.x,y:state.y,...facing},size);
 }
 function draw(){

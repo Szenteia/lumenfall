@@ -20,6 +20,6 @@ export function drawMovingGuard(ctx, enemy, pose, size, draw) {
   const position=pose?.guards?.find(p=>p.enemy===enemy);
   if(!position){draw();return;}
   ctx.save();
-  try{ctx.translate((position.x-enemy.x)*size,(position.y-enemy.y)*size);draw();}
+  try{ctx.translate((position.x-enemy.x)*size,(position.y-enemy.y)*size);draw(position.stride);}
   finally{ctx.restore();}
 }
