@@ -19,6 +19,10 @@ Gyors betöltés, mobil/desktop teljesítmény és mentéskompatibilitás minden
 
 Az új, 2-es pályaszabály három külön termet kapcsol össze szűk, elágazó folyosókkal, napi seed alapján változó nyomvonallal és teremméretekkel. Ez a terem-/útvonalstruktúra első bővítése, még 17×13 méretben; nagyobb térkép és mobilos kamera továbbra is külön lépés. Az 1-es pályaszabályú és örökölt mentések saját térképpel folytathatók; új expedíció kapja a 2-es szabályt.
 
+## Nagyobb dungeon · 2026-11-12
+
+Az új expedíciók 3-as pályaszabállyal 21×15-ös, négytermes gyűrűpályát kapnak. Mentés, import/export, előnézetek, háttér és nagyítható nézet a szabályhoz tartozó méretet használja. Az örökölt és szabály-1/-2 futamok 17×13-as térképe megmarad. A főágra kerülés és az élesítés külön művelet.
+
 ## További tervezett lépések
 
 - Lámpásmechanika: fényerő–észlelés–jutalom döntés; átlátható ellenséges szándékok.

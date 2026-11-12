@@ -1,3 +1,4 @@
+import{expeditionSize}from'./expedition-size.js';
 import{createDungeonBackground}from'./environment.js';
 import{drawAdventurer}from'./character.js';
 import{captureGuards,describeSceneMotion,drawMovingGuard}from'./guard-motion.js';
@@ -42,10 +43,18 @@ function drawScene(pose=null){
  drawGuardImpact(ctx,pose?.hit,size);drawAdventurer(ctx,pose||{x:state.x,y:state.y,...facing},size);
 }
 function draw(){
- motion.cancel(false);mapView.update(state);
+ motion.cancel(false);
+ const layout=expeditionSize(state);
+ if(layout){
+  const width=layout.width*size,height=layout.height*size;
+  if(canvas.width!==width)canvas.width=width;
+  if(canvas.height!==height)canvas.height=height;
+  mapView.setLayout(layout);
+ }
+ mapView.update(state);
  if(!state){drawScene();$('#log').textContent='A játék a korábbi mentés védelme miatt vár.';return;}
  renderGateDistance(state);renderMovementPreview(state);
- const environment=background.prepare(state);
+ const environment=background.prepare(state,layout);
  $('#expedition').textContent=expeditionLabel(state)+' · '+environment.name;
  forecast=previewWait(state);renderWaitPreview(forecast);
  drawScene();

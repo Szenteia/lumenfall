@@ -7,7 +7,7 @@ import {restoreGame} from '../src/save.js';
 import {readFileSync} from 'node:fs';
 
 const facing={dx:0,dy:1};
-function world(){const s=createGame({dayId:'2026-11-03'});s.x=8;s.y=6;s.turn=1;s.chests=[];s.enemies=[];s.tiles=Array.from({length:W*H},(_,i)=>+(i%W===0||i%W===W-1||i<W||i>=W*(H-1)));return s;}
+function world(){const s=createGame({rulesVersion:2,dayId:'2026-11-03'});s.x=8;s.y=6;s.turn=1;s.chests=[];s.enemies=[];s.tiles=Array.from({length:W*H},(_,i)=>+(i%W===0||i%W===W-1||i<W||i>=W*(H-1)));return s;}
 function act(s,fn){const before=captureGuards(s),player=fn();return describeSceneMotion(before,s,player,facing);}
 
 test('Guard-only motion follows real wait and heal in four directions without changing simulation or saves',()=>{

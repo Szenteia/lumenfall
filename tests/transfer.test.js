@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { createGame, rest, extract } from '../src/game.js';
 import { restoreGame, SAVE_KEY } from '../src/save.js';
 import { FORMAT, FORMAT_VERSION, MAX_SAVE_BYTES, exportSave, importSave, readSaveFile, commitImport, importSummary, downloadSave } from '../src/transfer.js';
-const game = () => createGame({ dayId: '2026-10-24' });
+const game = () => createGame({rulesVersion:2, dayId: '2026-10-24' });
 const wrap = state => JSON.stringify({ format: FORMAT, formatVersion: FORMAT_VERSION, state });
 
 test('Export is immutable and v2 roundtrips the full played state', () => {

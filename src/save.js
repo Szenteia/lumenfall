@@ -1,4 +1,6 @@
-import { W, H, SUPPORTED_RULES_VERSIONS, isDayId } from './daily.js';
+import { expeditionSize } from './expedition-size.js';
+import { SUPPORTED_RULES_VERSIONS, isDayId } from './daily.js';
+import { validateDungeonGeometry } from './dungeon-geometry.js';
 
 // Keep the original storage key, so existing players retain their expedition and bank.
 export const SAVE_KEY = 'lumenfall-save-v1';
@@ -8,15 +10,10 @@ export function restoreGame(json) {
   try { state = JSON.parse(json); } catch { return null; }
   if (!state || typeof state !== 'object' || Array.isArray(state) || ![1, 2].includes(state.version)) return null;
   const integer = value => Number.isSafeInteger(value) && value >= 0;
-  const floor = (x, y) => Number.isInteger(x) && Number.isInteger(y)
-    && x > 0 && x < W - 1 && y > 0 && y < H - 1 && state.tiles[y * W + x] === 0;
-  if (!Array.isArray(state.tiles) || state.tiles.length !== W * H
-    || !state.tiles.every(tile => tile === 0 || tile === 1)
-    || !state.tiles.every((tile, i) => {
-      const x = i % W, y = Math.floor(i / W);
-      return (x !== 0 && x !== W - 1 && y !== 0 && y !== H - 1) || tile === 1;
-    })
-    || !floor(state.x, state.y) || state.tiles[6 * W + 2] !== 0
+  const geometry = validateDungeonGeometry(state.tiles, expeditionSize(state));
+  if (!geometry) return null;
+  const { floor } = geometry;
+  if (!floor(state.x, state.y)
     || !Array.isArray(state.enemies) || !Array.isArray(state.chests)
     || state.enemies.length > 3 || state.chests.length > 3
     || new Set(state.enemies.map(e => e && `${e.x},${e.y}`)).size !== state.enemies.length

@@ -1,7 +1,8 @@
+import { expeditionSize } from './expedition-size.js';
 import { dungeonGrid } from './dungeon-grid.js';
 
 // Geometric minimum only: enemies can delay movement but are not permanent walls.
-export function gateDistance(state, size) {
+export function gateDistance(state, size = expeditionSize(state)) {
   const { tiles, x, y } = state;
   const grid = dungeonGrid(tiles, size);
   if (!grid) return null;
