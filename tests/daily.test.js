@@ -22,8 +22,8 @@ test('Same day produces independent identical worlds without Math.random', () =>
   const original = Math.random;
   try {
     Math.random = () => { throw new Error('Ambient randomness'); };
-    const a = createGame({ now: new Date('2026-10-22T00:00:00Z') });
-    const b = createGame({ now: new Date('2026-10-22T20:00:00Z') });
+    const a = createGame({rulesVersion:2, now: new Date('2026-10-22T00:00:00Z') });
+    const b = createGame({rulesVersion:2, now: new Date('2026-10-22T20:00:00Z') });
     assert.deepEqual(a, b);
     a.tiles[0] = 0; a.enemies[0].hp = 1;
     assert.equal(b.tiles[0], 1); assert.equal(b.enemies[0].hp, 6);
@@ -31,7 +31,7 @@ test('Same day produces independent identical worlds without Math.random', () =>
 });
 
 test('Versioned generator has a stable world fingerprint', () => {
-  assert.equal(RULES_VERSION, 2);
+  assert.equal(RULES_VERSION, 3);
   const hash = createHash('sha256').update(JSON.stringify(generateDungeon(dayId,1))).digest('hex');
   assert.equal(hash, '124e8f7a26515afbed452840cd3527d287c0504f0d946f31c9183100fcf71c02');
 });
@@ -76,7 +76,7 @@ test('Invalid day identifiers cannot silently seed another world', () => {
 });
 
 test('JSON restore preserves a played daily expedition and subsequent actions', () => {
-  const a = createGame({ dayId }); a.bank = 77;
+  const a = createGame({rulesVersion:2, dayId }); a.bank = 77;
   step(a, 1, 0); rest(a);
   const b = restoreGame(JSON.stringify(a));
   assert.deepEqual(b, a);
@@ -85,7 +85,7 @@ test('JSON restore preserves a played daily expedition and subsequent actions', 
 });
 
 test('Midnight preserves the old run; only a new expedition adopts the new day', () => {
-  const s = createGame({ now: new Date('2026-10-22T21:59:59Z') });
+  const s = createGame({now: new Date('2026-10-22T21:59:59Z') });
   s.bank = 99; step(s,1,0);
   const saved = JSON.stringify(s), restored = restoreGame(saved);
   const tomorrow = new Date('2026-10-22T22:00:00Z');
@@ -109,7 +109,7 @@ test('Existing v1 save migrates without replacing its map, progress or bank', ()
 
 test('Broken or unsupported saves are rejected without changing the input', () => {
   assert.equal(restoreGame('{'),null); assert.equal(restoreGame(null),null);
-  const s=createGame({dayId});
+  const s=createGame({rulesVersion:2,dayId});
   for(const invalid of [{...s,rulesVersion:999},{...s,dayId:'2026-02-30'},{...s,tiles:[]},{...s,hp:-1}]) {
     assert.equal(restoreGame(JSON.stringify(invalid)),null);
   }

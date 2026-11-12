@@ -17,7 +17,7 @@ test('HP bar uses current HP and recoil belongs only to a surviving target, neve
 });
 test('Target is captured before four-direction surviving/killing hits; source state is unchanged by description',()=>{
  for(const [dx,dy]of [[0,-1],[1,0],[0,1],[-1,0]])for(const hp of [4,8]){
-  const s=createGame({dayId:'2026-11-01'});s.x=8;s.y=6;s.tiles.fill(0);s.chests=[];s.enemies=[{x:8+dx,y:6+dy,hp}];
+  const s=createGame({rulesVersion:2,dayId:'2026-11-01'});s.x=8;s.y=6;s.tiles.fill(0);s.chests=[];s.enemies=[{x:8+dx,y:6+dy,hp}];
   const target=s.enemies[0],before=JSON.stringify(s),a=describeDirection(s,dx,dy);assert.equal(JSON.stringify(s),before);assert.deepEqual(a.target,{x:8+dx,y:6+dy});assert.equal(step(s,dx,dy),true);
   const effect={...a.target,survived:s.enemies.includes(target)},pose=motionPose({...a,hit:effect,to:{x:s.x,y:s.y}},110);
   assert.equal(pose.hit.survived,hp===8);assert.equal(pose.hit.x,8+dx);assert.equal(pose.hit.y,6+dy);assert.equal(pose.hit.strength,1);

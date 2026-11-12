@@ -1,3 +1,4 @@
+import { expeditionSize } from './expedition-size.js';
 import { step } from './game.js';
 import { dungeonGrid } from './dungeon-grid.js';
 
@@ -9,7 +10,7 @@ export const DIRECTIONS = Object.freeze([
 ]);
 
 // Each direction is an alternative single action, starting from the same live state.
-export function previewDirections(state, size) {
+export function previewDirections(state, size = expeditionSize(state)) {
   if (state.status !== 'active' || !dungeonGrid(state.tiles, size)) return null;
   return DIRECTIONS.map(direction => {
     const after = JSON.parse(JSON.stringify(state));

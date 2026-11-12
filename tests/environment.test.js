@@ -5,7 +5,7 @@ import {ENVIRONMENTS,environmentFor,drawDungeon,createDungeonBackground} from '.
 import {createGame,nextRun,step} from '../src/game.js';
 import {restoreGame} from '../src/save.js';
 import {exportSave,importSave} from '../src/transfer.js';
-const daily=()=>createGame({dayId:'2026-10-30'});
+const daily=()=>createGame({rulesVersion:2,dayId:'2026-10-30'});
 const legacy=()=>restoreGame(readFileSync(new URL('./fixtures/legacy-save.json',import.meta.url),'utf8'));
 const freeze=o=>{if(o&&typeof o==='object'){Object.values(o).forEach(freeze);Object.freeze(o);}return o;};
 function recording(){const calls=[];return {calls,ctx:new Proxy({},{get:(_,n)=>(...a)=>calls.push([n,...a]),set:(_,n,v)=>{calls.push([n,v]);return true;}})};}

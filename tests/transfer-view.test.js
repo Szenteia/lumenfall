@@ -16,7 +16,7 @@ class Node {
 }
 function setup() {
   const document = { body: new Node('body'), createElement: tag => new Node(tag) };
-  const parent = new Node('aside'); let state = createGame({ dayId: '2026-10-24' }); state.bank = 700;
+  const parent = new Node('aside'); let state = createGame({rulesVersion:2, dayId: '2026-10-24' }); state.bank = 700;
   const storage = { value: JSON.stringify(state), setItem(key, value) { this.value = value; } };
   let writes = 0;
   const api = mountTransfer({ document, parent, getState: () => state, storage: () => storage,
@@ -26,7 +26,7 @@ function setup() {
   return { api, dialog, preview, confirm, cancel, upload: panel.children[2], input: label.children[0], storage,
     state: () => state, writes: () => writes };
 }
-const imported = () => { const s = createGame({ dayId: '2026-10-23' }); s.bank = 30; return s; };
+const imported = () => { const s = createGame({rulesVersion:2, dayId: '2026-10-23' }); s.bank = 30; return s; };
 function choose(ui, state = imported()) {
   const text = exportSave(state).text;
   ui.input.files = [{ size: text.length, text: async () => text }];

@@ -8,7 +8,7 @@ import { FORMAT, FORMAT_VERSION, importSave } from '../src/transfer.js';
 const size = { width: 21, height: 15 };
 const at = (x, y) => y * size.width + x;
 function largeState(x = 16, y = 13) {
-  return { ...createGame({ dayId: '2026-11-04' }), x, y,
+  return { ...createGame({rulesVersion:2, dayId: '2026-11-04' }), x, y,
     tiles: Array(size.width * size.height).fill(0), enemies: [], chests: [] };
 }
 

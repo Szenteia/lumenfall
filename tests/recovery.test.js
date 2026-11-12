@@ -5,7 +5,7 @@ import { createGame } from '../src/game.js';
 import { SAVE_KEY } from '../src/save.js';
 import { readStartup, replaceWithNewGame, downloadOriginal } from '../src/recovery.js';
 import { mountRecovery } from '../src/recovery-view.js';
-const game = () => createGame({ dayId: '2026-10-28' });
+const game = () => createGame({rulesVersion:2, dayId: '2026-10-28' });
 function storage(raw) {
   return { raw, writes: [], failRead: false, failWrite: false,
     getItem(key) { assert.equal(key,SAVE_KEY);if(this.failRead)throw Error('read');return this.raw; },

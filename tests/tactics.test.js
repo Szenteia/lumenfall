@@ -94,7 +94,7 @@ test('Repeated forecasts do not mutate deeply frozen v1 or v2 saved states', () 
 });
 
 test('Real expeditions match the forecast through a sequence of turns', () => {
-  const state=createGame();
+  const state=createGame({rulesVersion:2});
   for(let i=0;i<16&&state.status==='active';i++) {
     assertActualWait(state,previewWait(state));
     if(i%3===0) step(state,1,0); else rest(state);
