@@ -1,5 +1,6 @@
 import {isDayId} from './daily.js';
 import {dungeonGrid} from './dungeon-grid.js';
+import {wallLights,drawWallLight} from './wall-lights.js';
 
 // Visual version 1: deliberately independent of the versioned gameplay PRNG.
 // Keep order/selection stable so an old expedition retains its surroundings.
@@ -20,6 +21,7 @@ export function drawDungeon(ctx, tiles, theme, size=40, layout) {
   const grid=dungeonGrid(tiles,layout);
   if(!grid)return;
   const {width,height}=grid;
+  const lights=new Set(wallLights(tiles,layout).map(({x,y})=>y*width+x));
   ctx.save();
   ctx.fillStyle=theme.edge;ctx.fillRect(0,0,width*size,height*size);
   ctx.lineWidth=Math.max(1,size/40);
@@ -51,6 +53,7 @@ export function drawDungeon(ctx, tiles, theme, size=40, layout) {
         line(theme.detail,[[4,11],[11,4]]);line(theme.detail,[[5,16],[16,5]]);
       }
     }
+    if(wall&&lights.has(y*width+x))drawWallLight(ctx,theme.id);
     ctx.restore();
   }
   ctx.restore();
