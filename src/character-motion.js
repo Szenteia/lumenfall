@@ -14,6 +14,7 @@ export function motionPose(action, elapsed) {
   return { x:action.from.x+(action.to.x-action.from.x)*eased,
     y:action.from.y+(action.to.y-action.from.y)*eased,dx:action.dx,dy:action.dy,
     bob:action.kind==='move'?Math.sin(t*Math.PI)*2:0,
+    stride:action.kind==='move'&&(action.from.x!==action.to.x||action.from.y!==action.to.y)&&t>0&&t<1?Math.sin(t*Math.PI*2):0,
     swing:action.kind==='attack'&&t<1?t:null,
     guards:(action.guards||[]).map(({enemy,from,to})=>{
       const progress=Math.max(0,Math.min(1,elapsed/MOVE_MS)),ease=progress*progress*(3-2*progress);
