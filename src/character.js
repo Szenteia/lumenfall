@@ -1,6 +1,8 @@
 // Original Lantern Guild adventurer. All coordinates are local to a 40 px cell.
 // No fonts, images, state mutations, or platform-specific glyphs.
-export function drawAdventurer(ctx, {x, y, dx = 0, dy = 1, bob = 0, swing = null}, size = 40) {
+export function drawAdventurer(ctx, {x, y, dx = 0, dy = 1, bob = 0, swing = null, stride = 0}, size = 40) {
+  const step=swing===null&&Number.isFinite(stride)?Math.max(-1,Math.min(1,stride)):0;
+  const hem=step*1.5;
   ctx.save();
   ctx.translate((x + .5) * size, (y + .5) * size);
   ctx.scale(size / 40, size / 40);
@@ -15,9 +17,9 @@ export function drawAdventurer(ctx, {x, y, dx = 0, dy = 1, bob = 0, swing = null
   oval('#0b111c99',0,14,12,3);
   ctx.translate(0,-bob);
   // Split cape and boots leave a readable silhouette at small scale.
-  shape('#133e54',[[-8,-1],[8,-1],[12,13],[2,11],[0,14],[-12,12]]);
-  shape('#279eaa',[[-7,0],[0,4],[7,0],[9,10],[2,8],[0,11],[-9,10]]);
-  ctx.fillStyle='#172336';ctx.fillRect(-6,10,4,5);ctx.fillRect(3,10,4,5);
+  shape('#133e54',[[-8,-1],[8,-1],[12,13+hem],[2,11+hem],[0,14],[-12,12-hem]]);
+  shape('#279eaa',[[-7,0],[0,4],[7,0],[9,10+hem],[2,8+hem],[0,11],[-9,10-hem]]);
+  ctx.fillStyle='#172336';ctx.fillRect(-6,10+step*2,4,5);ctx.fillRect(3,10-step*2,4,5);
   shape('#e4e9ef',[[-6,0],[6,0],[5,9],[-5,9]]);
   ctx.fillStyle='#395472';ctx.fillRect(-5,7,10,3);
   oval('#f4bd91',0,-6,8,8);

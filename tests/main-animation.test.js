@@ -5,13 +5,13 @@ import {createGame,W,H} from '../src/game.js';
 import {exportSave} from '../src/transfer.js';
 
 test('Real main animates only successful direction actions; frames never write HUD/save or advance turns; modal and run changes cancel',async()=>{
- let domWrites=0,time=0,id=0,storageWrites=0;const frames=new Map(),events={},nodes={},translations=[];
+ let domWrites=0,time=0,id=0,storageWrites=0;const frames=new Map(),events={},nodes={},translations=[],rectangles=[];
  class Node{
   constructor(){this.children=[];this.listeners={};this.dataset={};this.open=false;this.classList={toggle(){}};this.ownerDocument=doc;}
   set textContent(v){this.text=v;domWrites++;} get textContent(){return this.text;}
   append(...c){this.children.push(...c);} before(p){this.panel=p;} setAttribute(){} focus(){}
   addEventListener(n,fn){this.listeners[n]=fn;} showModal(){this.open=true;} close(){this.open=false;this.listeners.close?.();}
-  getContext(){return new Proxy({},{get:(_,n)=>(...args)=>{if(n==='translate')translations.push(args);}});}
+  getContext(){return new Proxy({},{get:(_,n)=>(...args)=>{if(n==='translate')translations.push(args);if(n==='fillRect')rectangles.push(args);}});}
  }
  const doc={hidden:false,createElement:()=>new Node(),querySelector:s=>nodes[s],querySelectorAll:()=>touches,addEventListener:(n,f)=>events[n]=f};doc.body=new Node();
  for(const n of ['game','wait','extract','paused','expedition','health','loot','bank','log','next','heal','pause','saveState','resume'])nodes['#'+n]=new Node();nodes.aside=new Node();
@@ -26,7 +26,8 @@ test('Real main animates only successful direction actions; frames never write H
  try{
   await import('../src/main.js?animation-contract');assert.equal(frames.size,0);
   events.keydown({key:'ArrowRight',preventDefault(){}});assert.equal(JSON.parse(storage.value).x,3);assert.equal(JSON.parse(storage.value).turn,1);assert.equal(frames.size,1);
-  const saved=storage.value,writes=storageWrites,hud=domWrites;tick(90);
+  const saved=storage.value,writes=storageWrites,hud=domWrites;rectangles.length=0;tick(45);
+  assert.ok(rectangles.some(r=>r.join(',')==='-6,12,4,5'));assert.ok(rectangles.some(r=>r.join(',')==='3,8,4,5'));tick(90);
   assert.deepEqual(translations.at(-2),[120,260]); // interpolated x=2.5 cell center, then local bob
   assert.equal(storage.value,saved);assert.equal(storageWrites,writes);assert.equal(domWrites,hud);
   touches[3].onclick();assert.equal(JSON.parse(storage.value).x,2);assert.equal(JSON.parse(storage.value).turn,2);assert.equal(frames.size,1);
