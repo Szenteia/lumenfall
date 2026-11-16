@@ -24,7 +24,7 @@ const renderMovementPreview=mountMovementPreview($('#heal'));
 const mapView=mountMapView({canvas,viewport:$('#mapViewport'),controls:$('#mapControls'),minus:$('#mapMinus'),plus:$('#mapPlus'),fit:$('#mapFit'),status:$('#mapZoom'),getState:()=>state,columns:W,rows:H});
 function save(){if(!state)return;try{localStorage.setItem(key,JSON.stringify(state));saveError=false;}catch{saveError=true;}}
 const background=createDungeonBackground();
-let forecast=null,facing={dx:0,dy:1};
+let environment=null,forecast=null,facing={dx:0,dy:1};
 const motionPreference=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)');
 const motion=createCharacterMotion({render:drawScene,
  requestFrame:globalThis.requestAnimationFrame?.bind(globalThis),
@@ -38,14 +38,14 @@ function drawScene(pose=null){
  drawWaitTargets(ctx,forecast,size);
  const glyph=(x,y,text,color)=>{ctx.fillStyle=color;ctx.font='25px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,x*size+size/2,y*size+size/2);};
  glyph(2,6,'◎','#7fe3cf');for(const c of state.chests)glyph(c.x,c.y,'◆','#edc473');
- for(const e of state.enemies)drawMovingGuard(ctx,e,pose,size,()=>drawGuard(ctx,e,pose?.hit,size));
+ for(const e of state.enemies)drawMovingGuard(ctx,e,pose,size,()=>drawGuard(ctx,e,pose?.hit,size,0,environment));
  drawGuardImpact(ctx,pose?.hit,size);drawAdventurer(ctx,pose||{x:state.x,y:state.y,...facing},size);
 }
 function draw(){
  motion.cancel(false);mapView.update(state);
  if(!state){drawScene();$('#log').textContent='A játék a korábbi mentés védelme miatt vár.';return;}
  renderGateDistance(state);renderMovementPreview(state);
- const environment=background.prepare(state);
+ environment=background.prepare(state);
  $('#expedition').textContent=expeditionLabel(state)+' · '+environment.name;
  forecast=previewWait(state);renderWaitPreview(forecast);
  drawScene();
