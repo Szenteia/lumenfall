@@ -47,7 +47,7 @@ test('Real main animates actual guard moves after direction, wait and heal with 
   const late=[...frames.values()][0];touches[1].onclick();const after=storage.value;const count=drawing.length;late();assert.equal(drawing.length,count);assert.equal(storage.value,after);
   // First enemy dies; the survivor enters its old cell but starts at its OWN cell.
   const killed=structuredClone(initial);killed.enemies=[{x:9,y:6,hp:4},{x:10,y:6,hp:8}];await load(killed);touches[1].onclick();assert.deepEqual(JSON.parse(storage.value).enemies,[{x:9,y:6,hp:8}]);assert.equal(guardOffsets().length,1);
-  tick(time+180);assert.equal(frames.size,1);assert.ok(!drawing.some(c=>c[0]==='translate'&&c[1]>0&&c[1]<=40&&c[2]===0));tick(time+40);assert.equal(frames.size,0);
+  tick(time+180);assert.equal(frames.size,1);assert.ok(!drawing.slice(0,drawing.findLastIndex(c=>c[0]==='translate'&&c[1]===340&&c[2]===260)).some(c=>c[0]==='translate'&&c[1]>0&&c[1]<=40&&c[2]===0));tick(time+40);assert.equal(frames.size,0);
   async function startMotion(){await load(initial);nodes['#wait'].onclick();assert.equal(frames.size,1);}
   await startMotion();nodes['#pause'].onclick();assert.equal(frames.size,0);const paused=storage.value;touches[1].onclick();assert.equal(storage.value,paused);nodes['#resume'].onclick();
   await startMotion();transfer.children[2].onclick();assert.equal(frames.size,0);dialog.children[5].onclick();

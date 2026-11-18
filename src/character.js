@@ -1,6 +1,16 @@
+// Cosmetic offsets driven by the existing 220 ms swing, never by game state.
+export function attackBodyPose(swing) {
+  if(!Number.isFinite(swing)||swing<0||swing>1)return {body:0,cape:0};
+  const ease=t=>t*t*(3-2*t);
+  const body=swing<.25?-ease(swing/.25):swing<.55?-1+4*ease((swing-.25)/.3):3*(1-ease((swing-.55)/.45));
+  return {body,cape:-body*.5};
+}
+
 // Original Lantern Guild adventurer. All coordinates are local to a 40 px cell.
 // No fonts, images, state mutations, or platform-specific glyphs.
 export function drawAdventurer(ctx, {x, y, dx = 0, dy = 1, bob = 0, swing = null}, size = 40) {
+  swing=Number.isFinite(swing)&&swing>=0&&swing<=1?swing:null;
+  const attack=attackBodyPose(swing);
   ctx.save();
   ctx.translate((x + .5) * size, (y + .5) * size);
   ctx.scale(size / 40, size / 40);
@@ -13,10 +23,10 @@ export function drawAdventurer(ctx, {x, y, dx = 0, dy = 1, bob = 0, swing = null
     ctx.fillStyle = color; ctx.beginPath(); ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2); ctx.fill();
   };
   oval('#0b111c99',0,14,12,3);
-  ctx.translate(0,-bob);
+  ctx.translate(dx*attack.body,dy*attack.body-bob);
   // Split cape and boots leave a readable silhouette at small scale.
-  shape('#133e54',[[-8,-1],[8,-1],[12,13],[2,11],[0,14],[-12,12]]);
-  shape('#279eaa',[[-7,0],[0,4],[7,0],[9,10],[2,8],[0,11],[-9,10]]);
+  shape('#133e54',[[-8,-1],[8,-1],[12,13],[2,11],[0,14],[-12,12]].map(([a,b])=>[a+dx*attack.cape,b+dy*attack.cape]));
+  shape('#279eaa',[[-7,0],[0,4],[7,0],[9,10],[2,8],[0,11],[-9,10]].map(([a,b])=>[a+dx*attack.cape,b+dy*attack.cape]));
   ctx.fillStyle='#172336';ctx.fillRect(-6,10,4,5);ctx.fillRect(3,10,4,5);
   shape('#e4e9ef',[[-6,0],[6,0],[5,9],[-5,9]]);
   ctx.fillStyle='#395472';ctx.fillRect(-5,7,10,3);
