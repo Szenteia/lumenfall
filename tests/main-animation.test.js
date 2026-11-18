@@ -34,7 +34,9 @@ test('Real main animates only successful direction actions; frames never write H
   touches[1].onclick();const transfer=nodes.aside.children[0],dialog=doc.body.children[0];transfer.children[2].onclick();assert.equal(frames.size,0);
   async function load(s){const text=exportSave(s).text,input=dialog.children[2].children[0];input.files=[{size:text.length,text:async()=>text}];await input.onchange();dialog.children[4].onclick();assert.equal(frames.size,0);}
   const attack=world();attack.enemies=[{x:3,y:6,hp:4}];await load(attack);touches[1].onclick();assert.equal(frames.size,1);assert.equal(JSON.parse(storage.value).x,2);assert.equal(JSON.parse(storage.value).enemies.length,0);
-  tick(time+110);assert.deepEqual(translations.at(-2),[100,260]);tick(time+110);assert.equal(frames.size,0);
+  const attackSaved=storage.value,attackWrites=storageWrites,attackHud=domWrites;
+  tick(time+121);assert.deepEqual(translations.at(-2),[100,260]);assert.deepEqual(translations.at(-1),[3,0]);assert.equal(storage.value,attackSaved);assert.equal(storageWrites,attackWrites);assert.equal(domWrites,attackHud);
+  tick(time+99);assert.equal(frames.size,0);assert.deepEqual(translations.at(-1),[0,0]);
   // Border block and completed run must never call animation.begin with a boolean result.
   const blocked=world();blocked.x=1;transfer.children[2].onclick();await load(blocked);const turn=JSON.parse(storage.value).turn;touches[3].onclick();assert.equal(frames.size,0);assert.equal(JSON.parse(storage.value).turn,turn);
   transfer.children[2].onclick();await load(world());nodes['#extract'].onclick();assert.equal(frames.size,0);touches[1].onclick();assert.equal(frames.size,0);nodes['#next'].onclick();assert.equal(frames.size,0);
