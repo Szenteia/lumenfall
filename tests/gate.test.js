@@ -39,7 +39,7 @@ test('Guards and relics do not change geometric minimum', () => {
 });
 test('Frozen daily and migrated legacy saves remain identical through repeated searches', () => {
   const legacy = restoreGame(readFileSync(new URL('./fixtures/legacy-save.json',import.meta.url),'utf8'));
-  for (const s of [createGame({dayId:'2026-10-25'}), legacy]) {
+  for (const s of [createGame({rulesVersion:2,dayId:'2026-10-25'}), legacy]) {
     const before = JSON.stringify(s); freeze(s);
     const distance = gateDistance(s); assert.equal(gateDistance(s), distance);
     assert.equal(typeof distance,'number'); assert.equal(JSON.stringify(s), before);
@@ -52,7 +52,7 @@ function mount() {
   return { render:mountGateDistance(button), panel:button.panel, nodes };
 }
 test('Display refreshes for movement, restore, next run and completed/dead status', () => {
-  const ui=mount(); let s=createGame({dayId:'2026-10-25'});
+  const ui=mount(); let s=createGame({rulesVersion:2,dayId:'2026-10-25'});
   ui.render(s); assert.match(ui.nodes[1].textContent,/kapunál/); assert.equal(ui.panel.hidden,false);
   step(s,1,0); ui.render(s); assert.equal(ui.nodes[1].textContent,'Kapu: legalább 1 mező');
   const saved=restoreGame(JSON.stringify(s)); ui.render(saved); assert.match(ui.nodes[1].textContent,/1 mező/);

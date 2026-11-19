@@ -5,7 +5,7 @@ import {ENVIRONMENTS,environmentFor,drawDungeon,createDungeonBackground} from '.
 import {createGame,nextRun,step} from '../src/game.js';
 import {restoreGame} from '../src/save.js';
 import {exportSave,importSave} from '../src/transfer.js';
-const daily=()=>createGame({dayId:'2026-10-30'});
+const daily=()=>createGame({rulesVersion:2,dayId:'2026-10-30'});
 const legacy=()=>restoreGame(readFileSync(new URL('./fixtures/legacy-save.json',import.meta.url),'utf8'));
 const freeze=o=>{if(o&&typeof o==='object'){Object.values(o).forEach(freeze);Object.freeze(o);}return o;};
 function recording(){const calls=[];return {calls,ctx:new Proxy({},{get:(_,n)=>(...a)=>calls.push([n,...a]),set:(_,n,v)=>{calls.push([n,v]);return true;}})};}
@@ -54,7 +54,7 @@ test('Larger backgrounds paint the last row and column with the supplied stride'
   const {ctx,calls}=recording();
   drawDungeon(ctx,tiles,theme,40,layout);
   assert.deepEqual(calls.find(c=>c[0]==='fillRect'),['fillRect',0,0,840,600]);
-  const painted=calls.flatMap((c,i)=>c[0]==='translate'?[{x:c[1],y:c[2],color:calls[i+2][1]}]:[]);
+  const painted=calls.flatMap((c,i)=>c[0]==='translate'&&calls[i+2]?.[0]==='fillStyle'?[{x:c[1],y:c[2],color:calls[i+2][1]}]:[]);
   assert.equal(painted.length,315);
   assert.deepEqual(painted.at(-2),{x:760,y:560,color:theme.floor});
   assert.deepEqual(painted.at(-1),{x:800,y:560,color:theme.wall});

@@ -1,4 +1,5 @@
 export const ZOOM_LEVELS=Object.freeze([1,1.5,2]);
+const validDimension=n=>Number.isSafeInteger(n)&&n>0;
 const clamp=(n,max)=>Math.max(0,Math.min(Math.max(0,max),n));
 export function axisScroll(position,cellSize,viewportSize,mapSize,scroll,center=false){
   const start=position*cellSize,end=start+cellSize;
@@ -8,15 +9,26 @@ export function axisScroll(position,cellSize,viewportSize,mapSize,scroll,center=
 
 export function mountMapView({canvas,viewport,controls,minus,plus,fit,status,getState,columns,rows,window=globalThis.window,ResizeObserver=globalThis.ResizeObserver}){
   // Progressive fallback for cached older markup; the original full map still works.
-  const noop={update(){},ownsTarget:()=>false};
+  const noop={update(){},setLayout:()=>false,ownsTarget:()=>false};
   if(!viewport||!controls||!minus||!plus||!fit||!status)return noop;
+  if(!validDimension(columns)||!validDimension(rows)){columns=17;rows=13;}
   let level=0,previous=null,previousX=null,previousY=null;
+  function aspect(){if(viewport.style)viewport.style.aspectRatio=`${columns} / ${rows}`;}
+  function setLayout(layout){
+    if(!validDimension(layout?.width)||!validDimension(layout?.height))return false;
+    if(layout.width===columns&&layout.height===rows)return true;
+    columns=layout.width;rows=layout.height;aspect();
+    const state=getState();
+    if(state)position(state,true);
+    else {viewport.scrollLeft=0;viewport.scrollTop=0;}
+    return true;
+  }
   function position(state,center=false){
-    if(!state)return;
+    if(!state||!Number.isFinite(state.x)||!Number.isFinite(state.y))return;
     const width=viewport.clientWidth,height=viewport.clientHeight;
     if(!(width>0&&height>0))return;
     const mapWidth=canvas.getBoundingClientRect().width,mapHeight=mapWidth*rows/columns;
-    if(!(mapWidth>0))return;
+    if(!(mapWidth>0&&Number.isFinite(mapWidth)&&Number.isFinite(mapHeight)))return;
     viewport.scrollLeft=axisScroll(state.x,mapWidth/columns,width,mapWidth,viewport.scrollLeft,center);
     viewport.scrollTop=axisScroll(state.y,mapHeight/rows,height,mapHeight,viewport.scrollTop,center);
   }
@@ -26,16 +38,18 @@ export function mountMapView({canvas,viewport,controls,minus,plus,fit,status,get
   }
   function zoom(next){
     const state=getState();if(!state)return;
-    level=clamp(next,ZOOM_LEVELS.length-1);canvas.style.width=`${ZOOM_LEVELS[level]*100}%`;
+    level=clamp(next,ZOOM_LEVELS.length-1);
+    const width=`${ZOOM_LEVELS[level]*100}%`;if(canvas.style.width!==width)canvas.style.width=width;
     labels(state);
     if(level===0){viewport.scrollLeft=0;viewport.scrollTop=0;}else position(state,true);
   }
   minus.onclick=()=>zoom(level-1);plus.onclick=()=>zoom(level+1);fit.onclick=()=>zoom(0);
-  canvas.style.width='100%';labels(getState());
+  canvas.style.width='100%';aspect();labels(getState());
   const resize=()=>position(getState());
   if(typeof ResizeObserver==='function')new ResizeObserver(resize).observe(viewport);
   else window?.addEventListener('resize',resize);
   return {
+    setLayout,
     update(state){
       labels(state);
       if(state!==previous)position(state,true);

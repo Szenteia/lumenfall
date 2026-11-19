@@ -28,7 +28,7 @@ test('Reduced motion, missing frame APIs and a preference change snap immediatel
 });
 test('Killing and surviving attacks are captured before simulation and stay on the original square',()=>{
  for(const hp of [4,8])for(const [dx,dy] of [[0,-1],[1,0],[0,1],[-1,0]]){
-  const s=createGame({dayId:'2026-10-29'});s.x=8;s.y=6;s.tiles.fill(0);s.enemies=[{x:8+dx,y:6+dy,hp}];s.chests=[];
+  const s=createGame({rulesVersion:2,dayId:'2026-10-29'});s.x=8;s.y=6;s.tiles.fill(0);s.enemies=[{x:8+dx,y:6+dy,hp}];s.chests=[];
   const before=JSON.stringify(s),a=describeDirection(s,dx,dy);assert.equal(JSON.stringify(s),before);assert.equal(a.kind,'attack');
   assert.equal(step(s,dx,dy),true);assert.equal(s.enemies.length,hp===4?0:1);
   const frozen=Object.freeze({...a,from:Object.freeze(a.from),to:Object.freeze({x:s.x,y:s.y})});
