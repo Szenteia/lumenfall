@@ -19,6 +19,10 @@ Gyors betöltés, mobil/desktop teljesítmény és mentéskompatibilitás minden
 
 Az új, 2-es pályaszabály három külön termet kapcsol össze szűk, elágazó folyosókkal, napi seed alapján változó nyomvonallal és teremméretekkel. Ez a terem-/útvonalstruktúra első bővítése, még 17×13 méretben; nagyobb térkép és mobilos kamera továbbra is külön lépés. Az 1-es pályaszabályú és örökölt mentések saját térképpel folytathatók; új expedíció kapja a 2-es szabályt.
 
+## Nagyobb dungeon · 2026-11-12
+
+Az új expedíciók 3-as pályaszabállyal 21×15-ös, négytermes gyűrűpályát kapnak. Mentés, import/export, előnézetek, háttér és nagyítható nézet a szabályhoz tartozó méretet használja. Az örökölt és szabály-1/-2 futamok 17×13-as térképe megmarad. A főágra kerülés és az élesítés külön művelet.
+
 ## További tervezett lépések
 
 - Lámpásmechanika: fényerő–észlelés–jutalom döntés; átlátható ellenséges szándékok.
@@ -41,3 +45,7 @@ Szerveroldali tranzakció és dayId szerinti egyedi kulcs garantálja a lezárá
 ## Teljesítménycélok (mérés előtt célok)
 
 Webes Canvas 2D alap; nincs WebGL követelmény vagy külső CDN. Eseményenkénti újrarajzolás; akció után rövid, véges animáció lehetséges. Üresjáratban nincs folyamatos render; csökkentett mozgás mellett azonnali állapotmegjelenítés. Chrome/Edge/Firefox/Safari, Android és iOS célzott tesztmátrix. Billentyűzet és touch, később gamepad. Jól olvasható UI 360 px-től, pálya zoom/pan kis képernyőre később. Assetekkel együtt külön betöltési keret és memória mérés.
+
+## Integráció ellenőrzésre · 2026-11-19
+
+A jelen ágon együtt szerepel a 21×15 négytermes gyűrűpálya, a három környezet fali díszei és mozaikjai, a rúnakapu és ereklyeládák, az őrpaletták és a játékos/őr járási, illetve játékos támadási animációi. A korábbi fejezetek történeti lépések; az új futam ezen az ágon rulesVersion 3. Ez még nem éles kiadás: a main és a GitHub Pages csak külön jóváhagyott összeolvasztás és telepítés után változhat. Részletek: [integrációs jegyzőkönyv](INTEGRATION_2026-11-19.md).

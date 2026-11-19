@@ -16,7 +16,7 @@ test('Real main animates actual guard moves after direction, wait and heal with 
  const doc={hidden:false,createElement:()=>new Node(),querySelector:s=>nodes[s],querySelectorAll:()=>touches,addEventListener:(n,f)=>events[n]=f};doc.body=new Node();
  for(const n of ['game','wait','extract','paused','expedition','health','loot','bank','log','next','heal','pause','saveState','resume'])nodes['#'+n]=new Node();nodes.aside=new Node();
  const touches=['0,-1','1,0','0,1','-1,0'].map(dir=>{const n=new Node();n.dataset.dir=dir;return n;});
- const world=()=>{const s=createGame({dayId:'2026-10-29'});s.tiles=Array.from({length:W*H},(_,i)=>+(i%W===0||i%W===W-1||i<W||i>=W*(H-1)));s.enemies=[];s.chests=[];return s;};
+ const world=()=>{const s=createGame({rulesVersion:2,dayId:'2026-10-29'});s.tiles=Array.from({length:W*H},(_,i)=>+(i%W===0||i%W===W-1||i<W||i>=W*(H-1)));s.enemies=[];s.chests=[];return s;};
  const storage={value:JSON.stringify(world()),getItem(){return this.value;},setItem(k,v){storageWrites++;this.value=v;}};
  let preferenceChanged;const preference={matches:false,addEventListener(n,f){preferenceChanged=f;}};
  const values={document:doc,window:{addEventListener:(n,f)=>events[n]=f},localStorage:storage,
@@ -33,10 +33,12 @@ test('Real main animates actual guard moves after direction, wait and heal with 
   nodes['#wait'].onclick();const expected=structuredClone(initial);rest(expected);assert.deepEqual(JSON.parse(storage.value),expected);
   assert.equal(frames.size,1);assert.equal(guardOffsets().length,2);
   const saved=storage.value,writes=storageWrites,hud=domWrites,start=time;
+  tick(start+45);assert.ok(drawing.some(c=>c[0]==='fillRect'&&c[1]===-7&&c[2]===7&&c[3]===5));
   tick(start+90);assert.ok(drawing.some(c=>c[0]==='translate'&&c[1]===20&&c[2]===0));assert.ok(drawing.some(c=>c[0]==='translate'&&c[1]===0&&c[2]===-20));
   assert.equal(storage.value,saved);assert.equal(storageWrites,writes);assert.equal(domWrites,hud);
   // Rest must keep the player still: its only translations are cell center and zero bob.
   assert.deepEqual(translations.at(-2),[340,260]);assert.ok(translations.at(-1).every(n=>n===0));
+  tick(start+135);assert.ok(drawing.some(c=>c[0]==='fillRect'&&c[1]===-7&&c[2]===11&&c[3]===5));
   tick(start+180);assert.equal(frames.size,0);assert.equal(guardOffsets().length,0);
   nodes['#wait'].onclick();assert.equal(frames.size,0); // odd turn, no guard motion
   const healthy=structuredClone(initial);healthy.hp=12;await load(healthy);nodes['#heal'].onclick();const healed=structuredClone(healthy);heal(healed);assert.deepEqual(JSON.parse(storage.value),healed);assert.equal(frames.size,1);tick(time+180);assert.equal(frames.size,0);
@@ -47,7 +49,7 @@ test('Real main animates actual guard moves after direction, wait and heal with 
   const late=[...frames.values()][0];touches[1].onclick();const after=storage.value;const count=drawing.length;late();assert.equal(drawing.length,count);assert.equal(storage.value,after);
   // First enemy dies; the survivor enters its old cell but starts at its OWN cell.
   const killed=structuredClone(initial);killed.enemies=[{x:9,y:6,hp:4},{x:10,y:6,hp:8}];await load(killed);touches[1].onclick();assert.deepEqual(JSON.parse(storage.value).enemies,[{x:9,y:6,hp:8}]);assert.equal(guardOffsets().length,1);
-  tick(time+180);assert.equal(frames.size,1);assert.ok(!drawing.some(c=>c[0]==='translate'&&c[1]>0&&c[1]<=40&&c[2]===0));tick(time+40);assert.equal(frames.size,0);
+  tick(time+180);assert.equal(frames.size,1);assert.ok(!drawing.slice(0,drawing.findLastIndex(c=>c[0]==='translate'&&c[1]===340&&c[2]===260)).some(c=>c[0]==='translate'&&c[1]>0&&c[1]<=40&&c[2]===0));tick(time+40);assert.equal(frames.size,0);
   async function startMotion(){await load(initial);nodes['#wait'].onclick();assert.equal(frames.size,1);}
   await startMotion();nodes['#pause'].onclick();assert.equal(frames.size,0);const paused=storage.value;touches[1].onclick();assert.equal(storage.value,paused);nodes['#resume'].onclick();
   await startMotion();transfer.children[2].onclick();assert.equal(frames.size,0);dialog.children[5].onclick();

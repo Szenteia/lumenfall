@@ -1,8 +1,9 @@
+import { expeditionSize } from './expedition-size.js';
 import { rest } from './game.js';
 import { dungeonGrid } from './dungeon-grid.js';
 
 // Simulate the real wait action on a detached copy of the persisted game state.
-export function previewWait(state, size) {
+export function previewWait(state, size = expeditionSize(state)) {
   if (state.status !== 'active' || !dungeonGrid(state.tiles, size)) return null;
   const after = JSON.parse(JSON.stringify(state));
   rest(after, size);

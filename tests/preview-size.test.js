@@ -5,7 +5,7 @@ import { previewDirections } from '../src/movement.js';
 import { previewWait } from '../src/tactics.js';
 
 const size = Object.freeze({ width: 21, height: 15 });
-const game = () => ({ ...createGame({ dayId: '2026-11-05' }), x: 18, y: 13,
+const game = () => ({ ...createGame({rulesVersion:2, dayId: '2026-11-05' }), x: 18, y: 13,
   tiles: Array(21 * 15).fill(0), enemies: [], chests: [] });
 const freeze = value => {
   if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); }
@@ -85,7 +85,7 @@ test('Invalid or mismatched dimensions hide both forecasts; absent size remains 
 });
 
 test('State width and height never override the trusted explicit or default layout', () => {
-  const normal=createGame({dayId:'2026-11-05'}), spoofed={...normal,width:21,height:15};
+  const normal=createGame({rulesVersion:2,dayId:'2026-11-05'}), spoofed={...normal,width:21,height:15};
   assert.deepEqual(previewDirections(spoofed),previewDirections(normal));
   assert.deepEqual(previewWait(spoofed),previewWait(normal));
   const large={...game(),width:17,height:13};

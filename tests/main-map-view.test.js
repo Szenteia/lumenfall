@@ -26,7 +26,7 @@ test('Real main zoom/scroll never write saves; viewport keys do not move player,
   nodes['#mapViewport'].append(nodes['#game']);nodes['#mapControls'].append(nodes['#mapMinus'],nodes['#mapPlus'],nodes['#mapFit']);
   nodes.aside=new Node('aside',document);
   touches=['0,-1','1,0','0,1','-1,0'].map(dir=>{const n=new Node('button',document);n.dataset.dir=dir;return n;});
-  const initial=createGame({dayId:'2026-10-26'});initial.enemies=[];initial.chests=[];initial.tiles=initial.tiles.map((v,i)=>+(i%17===0||i%17===16||i<17||i>=204));let writes=0;const storage={value:JSON.stringify(initial),getItem(){return this.value;},setItem(key,value){assert.equal(key,SAVE_KEY);writes++;this.value=value;}};
+  const initial=createGame({rulesVersion:2,dayId:'2026-10-26'});initial.enemies=[];initial.chests=[];initial.tiles=initial.tiles.map((v,i)=>+(i%17===0||i%17===16||i<17||i>=204));let writes=0;const storage={value:JSON.stringify(initial),getItem(){return this.value;},setItem(key,value){assert.equal(key,SAVE_KEY);writes++;this.value=value;}};
   const old={document:globalThis.document,window:globalThis.window,localStorage:globalThis.localStorage};
   globalThis.document=document;globalThis.window={addEventListener(name,fn){events[name]=fn;}};globalThis.localStorage=storage;
   try {
@@ -43,6 +43,14 @@ test('Real main zoom/scroll never write saves; viewport keys do not move player,
     const imported=structuredClone(initial);imported.x=15;imported.y=11;imported.bank=99;const text=exportSave(imported).text,input=dialog.children[2].children[0];input.files=[{size:text.length,text:async()=>text}];await input.onchange();dialog.children[4].onclick();assert.deepEqual(JSON.parse(storage.value),imported);assert.ok(viewport.scrollLeft>0);assert.ok(viewport.scrollTop>0);
     nodes['#pause'].onclick();const paused=storage.value;touches[1].onclick();assert.equal(storage.value,paused);nodes['#resume'].onclick();touches[3].onclick();assert.equal(JSON.parse(storage.value).x,14);
     nodes['#next'].onclick();assert.equal(JSON.parse(storage.value).bank,99);assert.equal(JSON.parse(storage.value).x,2);assert.equal(viewport.scrollLeft,0);
+    assert.equal(JSON.parse(storage.value).rulesVersion,3);assert.equal(nodes['#game'].width,840);assert.equal(nodes['#game'].height,600);
+    // Import an expanded run at the far corner, then the exact old map again.
+    async function load(state){transfer.children[2].onclick();const text=exportSave(state).text;input.files=[{size:text.length,text:async()=>text}];await input.onchange();dialog.children[4].onclick();assert.deepEqual(JSON.parse(storage.value),state);}
+    const large=createGame({dayId:'2026-11-12'});large.tiles=Array.from({length:315},(_,i)=>+(i%21===0||i%21===20||i<21||i>=294));large.enemies=[];large.chests=[];large.x=19;large.y=13;large.bank=99;
+    await load(large);assert.equal(nodes['#game'].width,840);assert.ok(viewport.scrollLeft>0);assert.ok(viewport.scrollTop>0);
+    nodes['#pause'].onclick();nodes['#resume'].onclick();assert.deepEqual(JSON.parse(storage.value),large);
+    touches[3].onclick();assert.equal(JSON.parse(storage.value).x,18);
+    await load(imported);assert.equal(nodes['#game'].width,680);assert.equal(nodes['#game'].height,520);
     const saved=storage.value,writeCount=writes;events.resize();assert.equal(storage.value,saved);assert.equal(writes,writeCount);
     // Real new markup plus a protected invalid startup, not just a missing-markup fallback.
     storage.value='broken-save';await import('../src/main.js?map-protected-contract');const protectedWrites=writes;

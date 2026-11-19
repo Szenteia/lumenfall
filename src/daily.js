@@ -1,6 +1,7 @@
+import { generateExpandedDungeon } from './expanded-dungeon.js';
 export const W = 17, H = 13;
-export const RULES_VERSION = 2;
-export const SUPPORTED_RULES_VERSIONS = Object.freeze([1, 2]);
+export const RULES_VERSION = 3;
+export const SUPPORTED_RULES_VERSIONS = Object.freeze([1, 2, 3]);
 const dateFormatter = new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Europe/Budapest', year: 'numeric', month: '2-digit', day: '2-digit',
 });
@@ -108,6 +109,7 @@ function generateRoomDungeon(dayId) {
 export function generateDungeon(dayId, rulesVersion=RULES_VERSION) {
   if(!isDayId(dayId))throw new RangeError('Invalid dungeon dayId');
   if(!SUPPORTED_RULES_VERSIONS.includes(rulesVersion))throw new RangeError('Unsupported dungeon rulesVersion');
+  if(rulesVersion===3){const {tiles,enemies,chests}=generateExpandedDungeon(dayId);return {tiles,enemies,chests};}
   return rulesVersion===1?generateLegacyDungeon(dayId):generateRoomDungeon(dayId);
 }
 
