@@ -1,5 +1,6 @@
 import {isDayId} from './daily.js';
 import {dungeonGrid} from './dungeon-grid.js';
+import {drawWallShadows} from './wall-shadows.js';
 
 // Visual version 1: deliberately independent of the versioned gameplay PRNG.
 // Keep order/selection stable so an old expedition retains its surroundings.
@@ -53,6 +54,7 @@ export function drawDungeon(ctx, tiles, theme, size=40, layout) {
     }
     ctx.restore();
   }
+  drawWallShadows(ctx,tiles,theme,size,layout);
   ctx.restore();
 }
 
