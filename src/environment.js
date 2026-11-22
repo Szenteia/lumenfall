@@ -1,3 +1,4 @@
+import {drawWallCorners} from './wall-corners.js';
 import {isDayId} from './daily.js';
 import {dungeonGrid} from './dungeon-grid.js';
 
@@ -53,6 +54,7 @@ export function drawDungeon(ctx, tiles, theme, size=40, layout) {
     }
     ctx.restore();
   }
+  drawWallCorners(ctx,tiles,theme,size,layout);
   ctx.restore();
 }
 
