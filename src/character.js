@@ -1,3 +1,5 @@
+import {drawSwordTrail} from './sword-trail.js';
+
 // Original Lantern Guild adventurer. All coordinates are local to a 40 px cell.
 // No fonts, images, state mutations, or platform-specific glyphs.
 export function drawAdventurer(ctx, {x, y, dx = 0, dy = 1, bob = 0, swing = null}, size = 40) {
@@ -39,9 +41,9 @@ export function drawAdventurer(ctx, {x, y, dx = 0, dy = 1, bob = 0, swing = null
     ctx.save();ctx.rotate(Math.atan2(dy,dx));
     const angle=-1.1+swing*2.2;
     ctx.rotate(angle);
+    drawSwordTrail(ctx,swing);
     shape('#d5ffff',[[6,-2],[21,-1],[24,0],[21,2],[6,2]]);
     ctx.fillStyle='#e6bc69';ctx.fillRect(6,-4,2,8);
-    ctx.strokeStyle='#7fe3cf';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,21,-.6,.6);ctx.stroke();
     ctx.restore();
   }
   ctx.restore();

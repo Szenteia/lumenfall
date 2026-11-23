@@ -5,13 +5,13 @@ import {createGame,W,H} from '../src/game.js';
 import {exportSave} from '../src/transfer.js';
 
 test('Real main animates only successful direction actions; frames never write HUD/save or advance turns; modal and run changes cancel',async()=>{
- let domWrites=0,time=0,id=0,storageWrites=0;const frames=new Map(),events={},nodes={},translations=[];
+ let trails=0,domWrites=0,time=0,id=0,storageWrites=0;const frames=new Map(),events={},nodes={},translations=[];
  class Node{
   constructor(){this.children=[];this.listeners={};this.dataset={};this.open=false;this.classList={toggle(){}};this.ownerDocument=doc;}
   set textContent(v){this.text=v;domWrites++;} get textContent(){return this.text;}
   append(...c){this.children.push(...c);} before(p){this.panel=p;} setAttribute(){} focus(){}
   addEventListener(n,fn){this.listeners[n]=fn;} showModal(){this.open=true;} close(){this.open=false;this.listeners.close?.();}
-  getContext(){return new Proxy({},{get:(_,n)=>(...args)=>{if(n==='translate')translations.push(args);}});}
+  getContext(){return new Proxy({},{get:(o,n)=>n in o?o[n]:(...args)=>{if(n==='clearRect')trails=0;if(n==='fill'&&o.fillStyle==='#7fe3cf')trails++;if(n==='translate')translations.push(args);}});}
  }
  const doc={hidden:false,createElement:()=>new Node(),querySelector:s=>nodes[s],querySelectorAll:()=>touches,addEventListener:(n,f)=>events[n]=f};doc.body=new Node();
  for(const n of ['game','wait','extract','paused','expedition','health','loot','bank','log','next','heal','pause','saveState','resume'])nodes['#'+n]=new Node();nodes.aside=new Node();
@@ -35,6 +35,23 @@ test('Real main animates only successful direction actions; frames never write H
   async function load(s){const text=exportSave(s).text,input=dialog.children[2].children[0];input.files=[{size:text.length,text:async()=>text}];await input.onchange();dialog.children[4].onclick();assert.equal(frames.size,0);}
   const attack=world();attack.enemies=[{x:3,y:6,hp:4}];await load(attack);touches[1].onclick();assert.equal(frames.size,1);assert.equal(JSON.parse(storage.value).x,2);assert.equal(JSON.parse(storage.value).enemies.length,0);
   tick(time+110);assert.deepEqual(translations.at(-2),[100,260]);tick(time+110);assert.equal(frames.size,0);
+  // Real rendering: hits, deaths and all interruption paths clear the transient trail.
+  for(const hp of [4,8]){
+   const s=world();s.enemies=[{x:3,y:6,hp}];transfer.children[2].onclick();await load(s);
+   touches[1].onclick();assert.equal(trails,0);const saved=storage.value,sw=storageWrites,dw=domWrites;
+   tick(time+110);assert.equal(trails,1);assert.equal(storage.value,saved);assert.equal(storageWrites,sw);assert.equal(domWrites,dw);
+   tick(time+110);assert.equal(trails,0);assert.equal(frames.size,0);
+  }
+  for(const stop of ['pause','import','next','replace','reduce']){
+   const s=world();s.enemies=[{x:3,y:6,hp:8}];transfer.children[2].onclick();await load(s);
+   touches[1].onclick();tick(time+80);assert.equal(trails,1);
+   if(stop==='pause'){nodes['#pause'].onclick();nodes['#resume'].onclick();}
+   if(stop==='import'){transfer.children[2].onclick();await load(world());}
+   if(stop==='next')nodes['#next'].onclick();
+   if(stop==='replace'){touches[2].onclick();assert.equal(trails,0);tick(time+180);}
+   if(stop==='reduce'){preference.matches=true;preferenceChanged();touches[1].onclick();preference.matches=false;}
+   assert.equal(trails,0);assert.equal(frames.size,0);
+  }
   // Border block and completed run must never call animation.begin with a boolean result.
   const blocked=world();blocked.x=1;transfer.children[2].onclick();await load(blocked);const turn=JSON.parse(storage.value).turn;touches[3].onclick();assert.equal(frames.size,0);assert.equal(JSON.parse(storage.value).turn,turn);
   transfer.children[2].onclick();await load(world());nodes['#extract'].onclick();assert.equal(frames.size,0);touches[1].onclick();assert.equal(frames.size,0);nodes['#next'].onclick();assert.equal(frames.size,0);
