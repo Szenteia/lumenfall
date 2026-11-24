@@ -49,3 +49,7 @@ Webes Canvas 2D alap; nincs WebGL követelmény vagy külső CDN. Eseményenkén
 ## Integráció ellenőrzésre · 2026-11-19
 
 A jelen ágon együtt szerepel a 21×15 négytermes gyűrűpálya, a három környezet fali díszei és mozaikjai, a rúnakapu és ereklyeládák, az őrpaletták és a játékos/őr járási, illetve játékos támadási animációi. A korábbi fejezetek történeti lépések; az új futam ezen az ágon rulesVersion 3. Ez még nem éles kiadás: a main és a GitHub Pages csak külön jóváhagyott összeolvasztás és telepítés után változhat. Részletek: [integrációs jegyzőkönyv](INTEGRATION_2026-11-19.md).
+
+## Integráció frissítése · 2026-11-24
+
+[Lumenfall automation] A #58 PR közös 21×15-ös változata a #60/#62/#64/#66 falárnyék-, karakterfej-, sarokdísz- és kardfény-fejlesztésekkel bővült. A régi mentések folytathatók. Ellenőrzések: [integráció](INTEGRATION_2026-11-24.md). A main és az éles oldal frissítéséhez továbbra is külön merge szükséges.

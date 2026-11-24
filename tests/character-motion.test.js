@@ -37,9 +37,9 @@ test('Killing and surviving attacks are captured before simulation and stay on t
  }
 });
 test('Original character renderer preserves frozen pose and balances context without font glyphs',()=>{
- const calls=[];const ctx=new Proxy({},{get:(_,name)=>(...args)=>calls.push([name,...args])});
+ const calls=[];const ctx=new Proxy({},{get:(_,name)=>(...args)=>calls.push([name,...args]),set:(_,name,value)=>{calls.push([name,value]);return true;}});
  const pose=Object.freeze({...motionPose({...action,kind:'attack'},100)}),before=JSON.stringify(pose);
  drawAdventurer(ctx,pose);assert.equal(JSON.stringify(pose),before);
  assert.equal(calls.filter(c=>c[0]==='save').length,calls.filter(c=>c[0]==='restore').length);
- assert.equal(calls.some(c=>c[0]==='fillText'),false);assert.ok(calls.some(c=>c[0]==='arc'));
+ assert.equal(calls.some(c=>c[0]==='fillText'),false);assert.ok(calls.some(c=>c[0]==='fillStyle'&&c[1]==='#7fe3cf'));
 });

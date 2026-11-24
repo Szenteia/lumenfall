@@ -1,6 +1,8 @@
+import {drawWallCorners} from './wall-corners.js';
 import {drawFloorMosaics} from './floor-mosaics.js';
 import {isDayId} from './daily.js';
 import {dungeonGrid} from './dungeon-grid.js';
+import {drawWallShadows} from './wall-shadows.js';
 import {wallLights,drawWallLight} from './wall-lights.js';
 
 // Visual version 1: deliberately independent of the versioned gameplay PRNG.
@@ -57,6 +59,8 @@ export function drawDungeon(ctx, tiles, theme, size=40, layout) {
     if(wall&&lights.has(y*width+x))drawWallLight(ctx,theme.id);
     ctx.restore();
   }
+  drawWallCorners(ctx,tiles,theme,size,layout);
+  drawWallShadows(ctx,tiles,theme,size,layout);
   drawFloorMosaics(ctx,tiles,theme,size,layout);
   ctx.restore();
 }
