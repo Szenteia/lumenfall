@@ -31,7 +31,7 @@ test('Same day produces independent identical worlds without Math.random', () =>
 });
 
 test('Versioned generator has a stable world fingerprint', () => {
-  assert.equal(RULES_VERSION, 3);
+  assert.equal(RULES_VERSION, 4);
   const hash = createHash('sha256').update(JSON.stringify(generateDungeon(dayId,1))).digest('hex');
   assert.equal(hash, '124e8f7a26515afbed452840cd3527d287c0504f0d946f31c9183100fcf71c02');
 });

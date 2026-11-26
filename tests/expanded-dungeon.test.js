@@ -62,7 +62,7 @@ test('Stable snapshot and independent output, valid leap day, invalid dates reje
  for(const id of [undefined,null,42,'2026-02-29','2026-13-01','2026-11-8',''])assert.throws(()=>generate(id),RangeError);
 });
 test('Expanded geometry requires rules3; older saved rules remain 17x13',()=>{
- const s=createGame({rulesVersion:2,dayId:'2026-11-08'});assert.equal(RULES_VERSION,3);assert.deepEqual(SUPPORTED_RULES_VERSIONS,[1,2,3]);
+ const s=createGame({rulesVersion:2,dayId:'2026-11-08'});assert.equal(RULES_VERSION,4);assert.deepEqual(SUPPORTED_RULES_VERSIONS,[1,2,3,4]);
  assert.equal(s.tiles.length,221);assert.deepEqual(restoreGame(JSON.stringify(s)),s);
  assert.equal(restoreGame(JSON.stringify({...s,...generate('2026-11-08')})),null);
 });

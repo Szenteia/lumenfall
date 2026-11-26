@@ -53,3 +53,7 @@ A jelen ágon együtt szerepel a 21×15 négytermes gyűrűpálya, a három kör
 ## Integráció frissítése · 2026-11-24
 
 [Lumenfall automation] A #58 PR közös 21×15-ös változata a #60/#62/#64/#66 falárnyék-, karakterfej-, sarokdísz- és kardfény-fejlesztésekkel bővült. A régi mentések folytathatók. Ellenőrzések: [integráció](INTEGRATION_2026-11-24.md). A main és az éles oldal frissítéséhez továbbra is külön merge szükséges.
+
+## Játszható csarnokdungeon · 2026-11-26
+
+[Lumenfall automation] A #58 integrációs ágon az új futam rulesVersion 4-gyel, 25×19-es öttermes csarnokpályán indul. A hall-v1 generátor központi csarnokot és kerülőutakat ad; a korábbi szabályok és mentések megtartják saját méretüket. A három környezet, animációk és nagyítható nézet együtt működését az integrációs tesztek ellenőrzik. A főág és az éles oldal változatlan; a valódi böngészős és mobileszközös ellenőrzés még szükséges. [Jegyzőkönyv](INTEGRATION_2026-11-26.md).

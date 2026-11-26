@@ -16,11 +16,11 @@ function reachable(tiles,start){const todo=[start],seen=new Set(todo);for(let i=
 function roomCores(tiles){const core=new Set();for(let y=2;y<H-2;y++)for(let x=2;x<W-2;x++){if([-1,0,1].every(dy=>[-1,0,1].every(dx=>tiles[(y+dy)*W+x+dx]===0)))core.add(y*W+x);}let count=0;while(core.size){count++;const todo=[core.values().next().value];core.delete(todo[0]);for(let i=0;i<todo.length;i++)for(const n of [todo[i]-1,todo[i]+1,todo[i]-W,todo[i]+W])if(core.delete(n))todo.push(n);}return count;}
 
 test('Both generator versions retain distinct stable fingerprints; unsupported versions fail explicitly',()=>{
- assert.equal(RULES_VERSION,3);
+ assert.equal(RULES_VERSION,4);
  assert.equal(hash(generateDungeon('2026-10-22',1)),'124e8f7a26515afbed452840cd3527d287c0504f0d946f31c9183100fcf71c02');
  assert.equal(hash(generateDungeon('2026-10-22',2)),'41aea1bd1ad50f4ccc83e2900d24d967d82b10f90aa543eb34ca43034f7b3f93');
- assert.deepEqual(generateDungeon('2026-10-22'),generateDungeon('2026-10-22',3));
- for(const version of [0,4,999,'2',null])assert.throws(()=>generateDungeon('2026-10-22',version),RangeError);
+ assert.deepEqual(generateDungeon('2026-10-22'),generateDungeon('2026-10-22',4));
+ for(const version of [0,5,999,'2',null])assert.throws(()=>generateDungeon('2026-10-22',version),RangeError);
 });
 test('365 room maps have three separate chamber cores, real narrow passages, connected loot and safe arrival',()=>{
  const layouts=new Set(),original=Math.random;Math.random=()=>{throw Error('No ambient random');};
@@ -45,10 +45,10 @@ test('A real pre-upgrade rules1 save and legacy v1 survive restore/export/import
  }
  const old=fixture('rules1-save.json');assert.equal(old.rulesVersion,1);assert.notDeepEqual(old.tiles,generateDungeon(old.dayId,2).tiles);
 });
-test('Old rules stay practice even on the same day; only a new run adopts rules3 and the new day',()=>{
+test('Old rules stay practice even on the same day; only a new run adopts rules4 and the new day',()=>{
  const old=fixture('rules1-save.json'),sameDay=new Date('2026-10-22T12:00:00Z'),tomorrow=new Date('2026-10-22T22:00:00Z');
  assert.equal(expeditionLabel(old,sameDay),'Gyakorló · 2026-10-22 · korábbi pályaszabály');assert.match(expeditionLabel(old,tomorrow),/^Gyakorló/);
- const restored=restoreGame(JSON.stringify(old));assert.deepEqual(restored,old);const n=nextRun(restored,{now:tomorrow});assert.equal(n.rulesVersion,3);assert.equal(n.dayId,'2026-10-23');assert.equal(n.bank,old.bank);assert.equal(expeditionLabel(n,tomorrow),'Napi pálya · 2026-10-23');
+ const restored=restoreGame(JSON.stringify(old));assert.deepEqual(restored,old);const n=nextRun(restored,{now:tomorrow});assert.equal(n.rulesVersion,4);assert.equal(n.dayId,'2026-10-23');assert.equal(n.bank,old.bank);assert.equal(expeditionLabel(n,tomorrow),'Napi pálya · 2026-10-23');
  assert.equal(expeditionLabel(n,new Date('2026-10-24T12:00:00Z')),'Gyakorló · 2026-10-23');assert.equal(expeditionLabel(restoreGame(JSON.stringify(fixture('legacy-save.json')))),'Gyakorló · korábbi mentés');
 });
 test('Unknown saved rules remain protected rather than being reinterpreted or overwritten',()=>{

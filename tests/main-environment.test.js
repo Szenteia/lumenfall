@@ -15,7 +15,7 @@ test('Real main refreshes theme and cached map for all three imports, legacy and
   constructor(){this.children=[];this.listeners={};this.dataset={};this.open=false;this.classList={toggle(){}};this.ownerDocument=doc;}
   append(...n){this.children.push(...n);}before(n){this.panel=n;}setAttribute(){}focus(){}
   addEventListener(n,f){this.listeners[n]=f;}showModal(){this.open=true;}close(){this.open=false;this.listeners.close?.();}
-  getContext(){return new Proxy({},{get:(_,name)=>(...a)=>{if(this===nodes['#game'])calls.push([name,...a]);if(name==='fillRect'&&((a[2]===680&&a[3]===520)||(a[2]===840&&a[3]===600)))builds++;},set:(_,name,value)=>{if(this===nodes['#game']&&name==='fillStyle')colors.push(value);return true;}});}
+  getContext(){return new Proxy({},{get:(_,name)=>(...a)=>{if(this===nodes['#game'])calls.push([name,...a]);if(name==='fillRect'&&((a[2]===680&&a[3]===520)||(a[2]===840&&a[3]===600)||(a[2]===1000&&a[3]===760)))builds++;},set:(_,name,value)=>{if(this===nodes['#game']&&name==='fillStyle')colors.push(value);return true;}});}
  }
  const doc={hidden:false,createElement:()=>new Node(),querySelector:s=>nodes[s],querySelectorAll:()=>touches,addEventListener(){}};doc.body=new Node();
  for(const n of ['game','wait','extract','paused','expedition','health','loot','bank','log','next','heal','pause','saveState','resume'])nodes['#'+n]=new Node();nodes.aside=new Node();
@@ -31,7 +31,7 @@ test('Real main refreshes theme and cached map for all three imports, legacy and
   const panel=nodes.aside.children[0],dialog=doc.body.children[0];
   async function load(s){panel.children[2].onclick();const text=exportSave(s).text,input=dialog.children[2].children[0];input.files=[{size:text.length,text:async()=>text}];await input.onchange();dialog.children[4].onclick();assert.equal(frames.size,0);assert.deepEqual(JSON.parse(storage.value),s);const layout=expeditionSize(s);assert.equal(nodes['#game'].width,layout.width*40);assert.equal(nodes['#game'].height,layout.height*40);assert.ok(nodes['#expedition'].textContent.endsWith(environmentFor(s.dayId).name));assertGate();}
   const days=new Map();for(let i=1;i<=28;i++){const d=`2026-11-${String(i).padStart(2,'0')}`;days.set(environmentFor(d).id,d);}assert.equal(days.size,3);
-  for(const rulesVersion of [2,3,2])for(const day of days.values()){
+  for(const rulesVersion of [2,4,3,2])for(const day of days.values()){
    const s=game(day,rulesVersion);colors.length=0;await load(s);assertPalette(day);assert.match(nodes['#expedition'].textContent,new RegExp(day));
    touches[1].onclick();const before=builds,saved=storage.value,writeCount=writes,label=nodes['#expedition'].textContent;assert.equal(frames.size,1);
    colors.length=0;now+=90;let fs=[...frames.values()];frames.clear();fs.forEach(f=>f());assertGate();assertPalette(day);assert.equal(builds,before);assert.equal(writes,writeCount);assert.equal(storage.value,saved);assert.equal(nodes['#expedition'].textContent,label);

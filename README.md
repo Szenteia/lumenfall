@@ -4,7 +4,7 @@ SzenteiA saját, felülnézetes, taktikai dungeon játéka. Első játszható al
 
 ## Integrációs változat · 2026-11-24
 
-Ez az ág egyesíti a 21×15-ös új expedíciót, a tematikus környezeti díszeket és a járó/támadó szereplőket. A régi 17×13-as mentések folytathatók. Ez PR-ban ellenőrzésre váró változat: a main és az éles oldal nem frissült automatikusan. A közös változat a falárnyékokat, sarokdíszeket, irányfüggő karakterfejet és kardcsapás-fénycsíkot is tartalmazza. Források és ellenőrzések: [INTEGRATION_2026-11-24.md](docs/INTEGRATION_2026-11-24.md).
+Ez az ág egyesíti a 25×19-es, öttermes új expedíciót, a tematikus környezeti díszeket és a járó/támadó szereplőket. A régi 17×13-as és 21×15-ös mentések változatlan pályán folytathatók; csak új futam vált rulesVersion 4-re, a kincstár megtartásával. Ez PR-ban ellenőrzésre váró változat: a main és az éles oldal nem frissült automatikusan. A közös változat a falárnyékokat, sarokdíszeket, irányfüggő karakterfejet és kardcsapás-fénycsíkot is tartalmazza. Források és ellenőrzések: [INTEGRATION_2026-11-26.md](docs/INTEGRATION_2026-11-26.md).
 
 ## Mozgás és kardcsapás előnézete
 

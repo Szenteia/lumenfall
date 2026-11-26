@@ -43,10 +43,13 @@ test('Real main zoom/scroll never write saves; viewport keys do not move player,
     const imported=structuredClone(initial);imported.x=15;imported.y=11;imported.bank=99;const text=exportSave(imported).text,input=dialog.children[2].children[0];input.files=[{size:text.length,text:async()=>text}];await input.onchange();dialog.children[4].onclick();assert.deepEqual(JSON.parse(storage.value),imported);assert.ok(viewport.scrollLeft>0);assert.ok(viewport.scrollTop>0);
     nodes['#pause'].onclick();const paused=storage.value;touches[1].onclick();assert.equal(storage.value,paused);nodes['#resume'].onclick();touches[3].onclick();assert.equal(JSON.parse(storage.value).x,14);
     nodes['#next'].onclick();assert.equal(JSON.parse(storage.value).bank,99);assert.equal(JSON.parse(storage.value).x,2);assert.equal(viewport.scrollLeft,0);
-    assert.equal(JSON.parse(storage.value).rulesVersion,3);assert.equal(nodes['#game'].width,840);assert.equal(nodes['#game'].height,600);
+    assert.equal(JSON.parse(storage.value).rulesVersion,4);assert.equal(nodes['#game'].width,1000);assert.equal(nodes['#game'].height,760);
     // Import an expanded run at the far corner, then the exact old map again.
     async function load(state){transfer.children[2].onclick();const text=exportSave(state).text;input.files=[{size:text.length,text:async()=>text}];await input.onchange();dialog.children[4].onclick();assert.deepEqual(JSON.parse(storage.value),state);}
-    const large=createGame({dayId:'2026-11-12'});large.tiles=Array.from({length:315},(_,i)=>+(i%21===0||i%21===20||i<21||i>=294));large.enemies=[];large.chests=[];large.x=19;large.y=13;large.bank=99;
+    const hall=createGame({dayId:'2026-11-26'});hall.tiles=Array.from({length:475},(_,i)=>+(i%25===0||i%25===24||i<25||i>=450));hall.enemies=[];hall.chests=[];hall.x=23;hall.y=17;hall.bank=99;
+    await load(hall);assert.equal(nodes['#game'].width,1000);assert.equal(nodes['#game'].height,760);assert.ok(viewport.scrollLeft>0);assert.ok(viewport.scrollTop>0);
+    touches[3].onclick();assert.equal(JSON.parse(storage.value).x,22);
+    const large=createGame({dayId:'2026-11-12',rulesVersion:3});large.tiles=Array.from({length:315},(_,i)=>+(i%21===0||i%21===20||i<21||i>=294));large.enemies=[];large.chests=[];large.x=19;large.y=13;large.bank=99;
     await load(large);assert.equal(nodes['#game'].width,840);assert.ok(viewport.scrollLeft>0);assert.ok(viewport.scrollTop>0);
     nodes['#pause'].onclick();nodes['#resume'].onclick();assert.deepEqual(JSON.parse(storage.value),large);
     touches[3].onclick();assert.equal(JSON.parse(storage.value).x,18);
