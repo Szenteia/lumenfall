@@ -5,13 +5,13 @@ import {createGame,step,rest,heal,W,H} from '../src/game.js';
 import {exportSave} from '../src/transfer.js';
 
 test('Real main animates actual guard moves after direction, wait and heal with atomic saves and safe interruption',async()=>{
- let domWrites=0,time=0,id=0,storageWrites=0;const frames=new Map(),events={},nodes={},translations=[],drawing=[];
+ let builds=0,domWrites=0,time=0,id=0,storageWrites=0;const frames=new Map(),events={},nodes={},translations=[],drawing=[];
  class Node{
   constructor(){this.children=[];this.listeners={};this.dataset={};this.open=false;this.classList={toggle(){}};this.ownerDocument=doc;}
   set textContent(v){this.text=v;domWrites++;} get textContent(){return this.text;}
   append(...c){this.children.push(...c);} before(p){this.panel=p;} setAttribute(){} focus(){}
   addEventListener(n,fn){this.listeners[n]=fn;} showModal(){this.open=true;} close(){this.open=false;this.listeners.close?.();}
-  getContext(){return new Proxy({},{get:(_,n)=>(...args)=>{if(n==='clearRect')drawing.length=0;if(n==='translate')translations.push(args);drawing.push([n,...args]);}});}
+  getContext(){return new Proxy({},{get:(_,n)=>(...args)=>{if(n==='fillRect'&&[680,840,1000].includes(args[2])&&[520,600,760].includes(args[3]))builds++;if(n==='clearRect')drawing.length=0;if(n==='translate')translations.push(args);drawing.push([n,...args]);}});}
  }
  const doc={hidden:false,createElement:()=>new Node(),querySelector:s=>nodes[s],querySelectorAll:()=>touches,addEventListener:(n,f)=>events[n]=f};doc.body=new Node();
  for(const n of ['game','wait','extract','paused','expedition','health','loot','bank','log','next','heal','pause','saveState','resume'])nodes['#'+n]=new Node();nodes.aside=new Node();
@@ -50,6 +50,35 @@ test('Real main animates actual guard moves after direction, wait and heal with 
   // First enemy dies; the survivor enters its old cell but starts at its OWN cell.
   const killed=structuredClone(initial);killed.enemies=[{x:9,y:6,hp:4},{x:10,y:6,hp:8}];await load(killed);touches[1].onclick();assert.deepEqual(JSON.parse(storage.value).enemies,[{x:9,y:6,hp:8}]);assert.equal(guardOffsets().length,1);
   tick(time+180);assert.equal(frames.size,1);assert.ok(!drawing.slice(0,drawing.findLastIndex(c=>c[0]==='translate'&&c[1]===340&&c[2]===260)).some(c=>c[0]==='translate'&&c[1]>0&&c[1]<=40&&c[2]===0));tick(time+40);assert.equal(frames.size,0);
+  // Actual main attack rendering: wait, heal, player step and surviving sword target.
+  for(const rulesVersion of [2,3,4])for(const mode of ['wait','heal','move','sword']){
+   const s=world(),w=rulesVersion===4?25:rulesVersion===3?21:17,h=rulesVersion===4?19:rulesVersion===3?15:13;
+   s.rulesVersion=rulesVersion;s.tiles=Array.from({length:w*h},(_,i)=>+(i%w===0||i%w===w-1||i<w||i>=w*(h-1)));
+   s.x=8;s.y=6;s.hp=10;s.enemies=[{x:mode==='move'?10:9,y:6,hp:8}];await load(s);
+   const expected=structuredClone(s);
+   if(mode==='wait'){rest(expected);nodes['#wait'].onclick();}
+   if(mode==='heal'){heal(expected);nodes['#heal'].onclick();}
+   if(mode==='move'||mode==='sword'){step(expected,1,0);touches[1].onclick();}
+   assert.deepEqual(JSON.parse(storage.value),expected);assert.equal(frames.size,1);
+   const saved=storage.value,sw=storageWrites,dw=domWrites,buildCount=builds;
+   tick(time+(mode==='sword'?110:90));
+   // Only the body advances left. Sword recoil combines with the lunge.
+   assert.ok(drawing.some(c=>c[0]==='translate'&&c[1]===(mode==='sword'?-2:-4)&&c[2]===0));
+   assert.equal(storage.value,saved);assert.equal(storageWrites,sw);assert.equal(domWrites,dw);assert.equal(builds,buildCount);
+   tick(time+220);assert.equal(frames.size,0);
+  }
+  // Attack-only animation obeys every interruption path as well.
+  for(const stop of ['pause','import','next','hidden','reduce','replace']){
+   const s=world();s.x=8;s.enemies=[{x:9,y:6,hp:8}];await load(s);nodes['#wait'].onclick();tick(time+90);
+   const stale=[...frames.values()][0];
+   if(stop==='pause'){nodes['#pause'].onclick();nodes['#resume'].onclick();}
+   if(stop==='import')await load(world());
+   if(stop==='next')nodes['#next'].onclick();
+   if(stop==='hidden'){doc.hidden=true;events.visibilitychange();doc.hidden=false;nodes['#resume'].onclick();}
+   if(stop==='reduce'){preference.matches=true;preferenceChanged();preference.matches=false;}
+   if(stop==='replace'){touches[3].onclick();tick(time+220);}
+   const count=drawing.length;stale();assert.equal(drawing.length,count);assert.equal(frames.size,0);
+  }
   async function startMotion(){await load(initial);nodes['#wait'].onclick();assert.equal(frames.size,1);}
   await startMotion();nodes['#pause'].onclick();assert.equal(frames.size,0);const paused=storage.value;touches[1].onclick();assert.equal(storage.value,paused);nodes['#resume'].onclick();
   await startMotion();transfer.children[2].onclick();assert.equal(frames.size,0);dialog.children[5].onclick();

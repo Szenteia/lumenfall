@@ -6,16 +6,21 @@ amber:Object.freeze({cape:'#483124',capeLeft:'#95653d',capeRight:'#bd8751',armor
 });
 // Original Crystal Guard: code-native shapes, shared by all existing guards.
 // Hit data is transient presentation only; it never changes an enemy or the game.
-export function drawGuard(ctx, enemy, hit=null, size=40, stride=0, theme=null) {
+export function drawGuard(ctx, enemy, hit=null, size=40, stride=0, theme=null, attack=null) {
   const gait=Number.isFinite(stride)?Math.max(-1,Math.min(1,stride)):0;
   const hem=gait*1.5,foot=gait*2;
   const palette=Object.hasOwn(GUARD_PALETTES,theme?.id)?GUARD_PALETTES[theme.id]:GUARD_PALETTES.crystal;
   const strength=hit?.survived&&hit.x===enemy.x&&hit.y===enemy.y?hit.strength:0;
   ctx.save();ctx.translate((enemy.x+.5)*size,(enemy.y+.5)*size);ctx.scale(size/40,size/40);
   const polygon=(color,points)=>{ctx.fillStyle=color;ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();};
-  // Shadow and HP stay anchored while the body recoils at most two pixels.
+  // Shadow and HP stay anchored; combined recoil/lunge is capped at four pixels.
   ctx.fillStyle='#090d1880';ctx.beginPath();ctx.ellipse(0,12,12,3,0,0,Math.PI*2);ctx.fill();
-  ctx.save();ctx.translate((hit?.dx||0)*strength*2,(hit?.dy||0)*strength*2);
+  const lunge=Number.isFinite(attack?.strength)?Math.max(0,Math.min(1,attack.strength)):0;
+  const cardinal=Math.abs(attack?.dx)+Math.abs(attack?.dy)===1;
+  const offsetX=(hit?.dx||0)*strength*2+(cardinal?attack.dx*lunge*4:0);
+  const offsetY=(hit?.dy||0)*strength*2+(cardinal?attack.dy*lunge*4:0);
+  const cap=Math.max(1,Math.hypot(offsetX,offsetY)/4);
+  ctx.save();ctx.translate(offsetX/cap,offsetY/cap);
   polygon(palette.cape,[[-8,-1],[8,-1],[13+hem,11],[4+hem,10],[hem,12],[-12+hem,10]]);
   polygon(palette.capeLeft,[[-8,0],[-2,4],[hem,11],[-9+hem,9]]);
   polygon(palette.capeRight,[[8,0],[2,4],[hem,11],[10+hem,9]]);
