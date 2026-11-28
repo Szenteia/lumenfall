@@ -5,7 +5,7 @@ import { W, H, createGame, step } from '../src/game.js';
 import { restoreGame } from '../src/save.js';
 import { DIRECTIONS, previewDirections, directionSummary } from '../src/movement.js';
 import { mountMovementPreview } from '../src/movement-view.js';
-const game = () => ({ ...createGame({ dayId: '2026-10-26' }), x: 5, y: 5, enemies: [], chests: [],
+const game = () => ({ ...createGame({rulesVersion:2, dayId: '2026-10-26' }), x: 5, y: 5, enemies: [], chests: [],
   tiles: Array.from({ length: W * H }, (_, i) => i % W === 0 || i % W === W - 1 || i < W || i >= W * (H - 1) ? 1 : 0) });
 const right = s => previewDirections(s).find(p => p.id === 'right');
 const freeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(freeze); Object.freeze(value); } return value; };
@@ -54,13 +54,13 @@ test('Fatal action caps actual loss at remaining HP and drops carried loot', () 
 });
 test('Repeated previews preserve deeply frozen daily and migrated legacy saves', () => {
   const legacy=restoreGame(readFileSync(new URL('./fixtures/legacy-save.json',import.meta.url),'utf8'));
-  for(const s of [createGame({dayId:'2026-10-26'}),legacy]) {
+  for(const s of [createGame({rulesVersion:2,dayId:'2026-10-26'}),legacy]) {
     const before=JSON.stringify(s); freeze(s);
     assert.deepEqual(previewDirections(s),previewDirections(s)); assert.equal(JSON.stringify(s),before);
   }
 });
 test('Predicted positions, enemies, HP, status, loot and turn match actual actions through a run', () => {
-  const s=createGame({dayId:'2026-10-26'});
+  const s=createGame({rulesVersion:2,dayId:'2026-10-26'});
   for(let turn=0;turn<50 && s.status==='active';turn++) {
     const before=JSON.stringify(s), previews=previewDirections(s);
     for(const p of previews) {

@@ -14,11 +14,16 @@ export function motionPose(action, elapsed) {
   return { x:action.from.x+(action.to.x-action.from.x)*eased,
     y:action.from.y+(action.to.y-action.from.y)*eased,dx:action.dx,dy:action.dy,
     bob:action.kind==='move'?Math.sin(t*Math.PI)*2:0,
+    stride:action.kind==='move'&&(action.from.x!==action.to.x||action.from.y!==action.to.y)&&t>0&&t<1?Math.sin(t*Math.PI*2):0,
     swing:action.kind==='attack'&&t<1?t:null,
     guards:(action.guards||[]).map(({enemy,from,to})=>{
       const progress=Math.max(0,Math.min(1,elapsed/MOVE_MS)),ease=progress*progress*(3-2*progress);
-      return {enemy,x:from.x+(to.x-from.x)*ease,y:from.y+(to.y-from.y)*ease};
+      // One bounded gait cycle, only during an actual move. Explicit endpoints
+      // keep the resting silhouette exact, including during longer attacks.
+      const stride=progress>0&&progress<1&&(from.x!==to.x||from.y!==to.y)?Math.sin(progress*Math.PI*2):0;
+      return {enemy,x:from.x+(to.x-from.x)*ease,y:from.y+(to.y-from.y)*ease,stride};
     }),
+    guardAttacks:(action.guardAttacks||[]).map(a=>({...a,strength:t>0&&t<1?Math.sin(t*Math.PI):0})),
     hit:action.kind==='attack'&&action.hit&&t<1?{...action.hit,dx:action.dx,dy:action.dy,strength:Math.sin(t*Math.PI)}:null };
 }
 
@@ -35,7 +40,8 @@ export function createCharacterMotion({render, requestFrame, cancelFrame, now, r
     // Copy primitives: the subsequently mutated game state is never an animation source.
     action={...action,from:{...action.from},to:{...action.to},hit:action.hit?{...action.hit}:null};
     action.guards=(action.guards||[]).map(g=>({...g,from:{...g.from},to:{...g.to}}));
-    if(action.kind==='guards'&&!action.guards.length){render(null);return;}
+    action.guardAttacks=(action.guardAttacks||[]).map(a=>({...a}));
+    if(action.kind==='guards'&&!action.guards.length&&!action.guardAttacks.length){render(null);return;}
     const token=generation,start=now(),duration=action.kind==='attack'?ATTACK_MS:MOVE_MS;
     render(motionPose(action,0));
     const tick=()=>{

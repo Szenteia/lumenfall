@@ -19,6 +19,10 @@ Gyors betöltés, mobil/desktop teljesítmény és mentéskompatibilitás minden
 
 Az új, 2-es pályaszabály három külön termet kapcsol össze szűk, elágazó folyosókkal, napi seed alapján változó nyomvonallal és teremméretekkel. Ez a terem-/útvonalstruktúra első bővítése, még 17×13 méretben; nagyobb térkép és mobilos kamera továbbra is külön lépés. Az 1-es pályaszabályú és örökölt mentések saját térképpel folytathatók; új expedíció kapja a 2-es szabályt.
 
+## Nagyobb dungeon · 2026-11-12
+
+Az új expedíciók 3-as pályaszabállyal 21×15-ös, négytermes gyűrűpályát kapnak. Mentés, import/export, előnézetek, háttér és nagyítható nézet a szabályhoz tartozó méretet használja. Az örökölt és szabály-1/-2 futamok 17×13-as térképe megmarad. A főágra kerülés és az élesítés külön művelet.
+
 ## További tervezett lépések
 
 - Lámpásmechanika: fényerő–észlelés–jutalom döntés; átlátható ellenséges szándékok.
@@ -41,3 +45,23 @@ Szerveroldali tranzakció és dayId szerinti egyedi kulcs garantálja a lezárá
 ## Teljesítménycélok (mérés előtt célok)
 
 Webes Canvas 2D alap; nincs WebGL követelmény vagy külső CDN. Eseményenkénti újrarajzolás; akció után rövid, véges animáció lehetséges. Üresjáratban nincs folyamatos render; csökkentett mozgás mellett azonnali állapotmegjelenítés. Chrome/Edge/Firefox/Safari, Android és iOS célzott tesztmátrix. Billentyűzet és touch, később gamepad. Jól olvasható UI 360 px-től, pálya zoom/pan kis képernyőre később. Assetekkel együtt külön betöltési keret és memória mérés.
+
+## Integráció ellenőrzésre · 2026-11-19
+
+A jelen ágon együtt szerepel a 21×15 négytermes gyűrűpálya, a három környezet fali díszei és mozaikjai, a rúnakapu és ereklyeládák, az őrpaletták és a játékos/őr járási, illetve játékos támadási animációi. A korábbi fejezetek történeti lépések; az új futam ezen az ágon rulesVersion 3. Ez még nem éles kiadás: a main és a GitHub Pages csak külön jóváhagyott összeolvasztás és telepítés után változhat. Részletek: [integrációs jegyzőkönyv](INTEGRATION_2026-11-19.md).
+
+## Integráció frissítése · 2026-11-24
+
+[Lumenfall automation] A #58 PR közös 21×15-ös változata a #60/#62/#64/#66 falárnyék-, karakterfej-, sarokdísz- és kardfény-fejlesztésekkel bővült. A régi mentések folytathatók. Ellenőrzések: [integráció](INTEGRATION_2026-11-24.md). A main és az éles oldal frissítéséhez továbbra is külön merge szükséges.
+
+## Játszható csarnokdungeon · 2026-11-26
+
+[Lumenfall automation] A #58 integrációs ágon az új futam rulesVersion 4-gyel, 25×19-es öttermes csarnokpályán indul. A hall-v1 generátor központi csarnokot és kerülőutakat ad; a korábbi szabályok és mentések megtartják saját méretüket. A három környezet, animációk és nagyítható nézet együtt működését az integrációs tesztek ellenőrzik. A főág és az éles oldal változatlan; a valódi böngészős és mobileszközös ellenőrzés még szükséges. [Jegyzőkönyv](INTEGRATION_2026-11-26.md).
+
+## Őrzők harci visszajelzése · 2026-11-27
+
+[Lumenfall automation] A #58 ágon a ténylegesen támadó őrzők rövid előrelendülést kapnak, a meglévő járás és találati reakció mellett. A harci szabályok és a mentések változatlanok. Részletek és tesztkorlátok: [GUARD_ATTACK.md](GUARD_ATTACK.md).
+
+## Változatos padlómozaikok · 2026-11-28
+
+[Lumenfall automation] A #58 ágon mindhárom környezet három eltérő padlómozaikot kapott, változatlan helyválasztással, mentésekkel és háttércache-sel. Részletek, 187 sikeres teszt és böngészős ellenőrzési korlát: [MOSAIC_VARIANTS.md](MOSAIC_VARIANTS.md). A főág és az éles oldal változatlan.

@@ -2,6 +2,10 @@
 
 SzenteiA saját, felülnézetes, taktikai dungeon játéka. Első játszható alap: 2026-10-21.
 
+## Integrációs változat · 2026-11-24
+
+Ez az ág egyesíti a 25×19-es, öttermes új expedíciót, a tematikus környezeti díszeket és a járó/támadó szereplőket. A régi 17×13-as és 21×15-ös mentések változatlan pályán folytathatók; csak új futam vált rulesVersion 4-re, a kincstár megtartásával. Ez PR-ban ellenőrzésre váró változat: a main és az éles oldal nem frissült automatikusan. A közös változat a falárnyékokat, sarokdíszeket, irányfüggő karakterfejet és kardcsapás-fénycsíkot is tartalmazza. Források és ellenőrzések: [INTEGRATION_2026-11-26.md](docs/INTEGRATION_2026-11-26.md).
+
 ## Mozgás és kardcsapás előnézete
 
 A négyirányú taktikai panel megmutatja, hogy a következő iránygomb lépést, kardcsapást vagy blokkolt próbálkozást jelentene, és mennyi HP maradna az őrzők válasza után. A „VÉGZETES” jelzés halálos kimenetelt jelez. A négy sor külön lehetőség, nem akciósorozat; az előnézet nem fogyaszt kört és nem módosít mentést. Falnak lépés nem indít őrzőkört. Őrzőre csapáskor a karakter a helyén marad, megöléskor is. A megszokott irányítás egy megnyomással működik.
@@ -24,7 +28,7 @@ Nyisd meg: http://localhost:5173 . Windows alatt, ha a python3 parancs nem talá
 ## Játékmenet
 
 - WASD / nyilak, telefonon érintéses iránygombok. 760 px szélességig az iránygombok görgetés közben is a képernyő alján maradnak; a lap alján külön hely biztosítja, hogy a mentéskezelők és a lábléc felgörgethetők legyenek a sáv fölé.
-- A fehér bábu a játékos, a rózsaszín bábuk az őrzők, az arany rombuszok az ereklyék.
+- Saját lámpáscéhes kalandozó, környezethez illő Kristályőrök és ereklyeládák jelölik a szereplőket és a zsákmányt ebben az integrációs változatban.
 - Az őrző felé lépés támadás. A falnak lépés nem fogyaszt kört.
 - A közeli őrzők minden második körben közelednek; a szomszédos őrző minden körben visszaüt.
 - Menj vissza a kezdő türkiz kapuhoz, és válaszd a kijutást a zsákmány megőrzéséhez.

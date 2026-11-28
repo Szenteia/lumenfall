@@ -1,10 +1,11 @@
+import { expeditionSize } from './expedition-size.js';
 import { RULES_VERSION, getDayId, generateDungeon } from './daily.js';
 import { dungeonGrid } from './dungeon-grid.js';
 export { W, H } from './daily.js';
-export function createGame({now = new Date(), dayId = getDayId(now)} = {}){
- return {version:2,dayId,rulesVersion:RULES_VERSION,x:2,y:6,hp:24,maxHp:24,potions:2,loot:0,bank:0,turn:0,status:'active',...generateDungeon(dayId),log:'A Lámpáscéh rád bízza az első expedíciót.'};
+export function createGame({now = new Date(), dayId = getDayId(now), rulesVersion = RULES_VERSION} = {}){
+ return {version:2,dayId,rulesVersion,x:2,y:6,hp:24,maxHp:24,potions:2,loot:0,bank:0,turn:0,status:'active',...generateDungeon(dayId,rulesVersion),log:'A Lámpáscéh rád bízza az első expedíciót.'};
 }
-export function step(s,dx,dy,size){
+export function step(s,dx,dy,size=expeditionSize(s)){
  if(s.status!=='active'||Math.abs(dx)+Math.abs(dy)!==1)return false;
  const grid=dungeonGrid(s.tiles,size),x=s.x+dx,y=s.y+dy;
  if(!grid||grid.floorIndex(x,y)<0)return false;
@@ -23,12 +24,12 @@ function resolveEnemies(s,grid){
  }
  if(s.hp<=0){s.hp=0;s.loot=0;s.status='defeated';s.log='Elestél. A korábban hazavitt kristályok megmaradnak.';}
 }
-export function rest(s,size){
+export function rest(s,size=expeditionSize(s)){
  if(s.status!=='active')return;
  const grid=dungeonGrid(s.tiles,size);
  if(grid)resolveEnemies(s,grid);
 }
-export function heal(s,size){
+export function heal(s,size=expeditionSize(s)){
  if(s.status!=='active'||!s.potions||s.hp===s.maxHp)return;
  const grid=dungeonGrid(s.tiles,size);
  if(!grid)return;

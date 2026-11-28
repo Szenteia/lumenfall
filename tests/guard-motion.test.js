@@ -7,7 +7,7 @@ import {restoreGame} from '../src/save.js';
 import {readFileSync} from 'node:fs';
 
 const facing={dx:0,dy:1};
-function world(){const s=createGame({dayId:'2026-11-03'});s.x=8;s.y=6;s.turn=1;s.chests=[];s.enemies=[];s.tiles=Array.from({length:W*H},(_,i)=>+(i%W===0||i%W===W-1||i<W||i>=W*(H-1)));return s;}
+function world(){const s=createGame({rulesVersion:2,dayId:'2026-11-03'});s.x=8;s.y=6;s.turn=1;s.chests=[];s.enemies=[];s.tiles=Array.from({length:W*H},(_,i)=>+(i%W===0||i%W===W-1||i<W||i>=W*(H-1)));return s;}
 function act(s,fn){const before=captureGuards(s),player=fn();return describeSceneMotion(before,s,player,facing);}
 
 test('Guard-only motion follows real wait and heal in four directions without changing simulation or saves',()=>{
@@ -41,7 +41,7 @@ test('Blocked, odd, inactive, failed heal and replaced states never invent guard
  s.x=1;assert.equal(act(s,()=>step(s,-1,0)),null);
  s.status='defeated';s.hp=0;assert.equal(act(s,()=>rest(s)),null);
  assert.equal(describeSceneMotion(captureGuards(s),world(),null,facing),null);
- const occupied=world();occupied.enemies=[{x:10,y:6,hp:8},{x:9,y:6,hp:8}];const a=act(occupied,()=>rest(occupied));assert.equal(a,null);
+ const occupied=world();occupied.enemies=[{x:10,y:6,hp:8},{x:9,y:6,hp:8}];const a=act(occupied,()=>rest(occupied));assert.equal(a.guards.length,0);assert.equal(a.guardAttacks.length,1);
  // A wall-blocked primary direction takes the actual alternative, not a prediction.
  const alternative=world();alternative.enemies=[{x:10,y:7,hp:8}];alternative.tiles[7*W+9]=1;
  const b=act(alternative,()=>rest(alternative));assert.deepEqual(b.guards[0].to,{x:10,y:6});
