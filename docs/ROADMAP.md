@@ -61,3 +61,7 @@ A jelen ágon együtt szerepel a 21×15 négytermes gyűrűpálya, a három kör
 ## Őrzők harci visszajelzése · 2026-11-27
 
 [Lumenfall automation] A #58 ágon a ténylegesen támadó őrzők rövid előrelendülést kapnak, a meglévő járás és találati reakció mellett. A harci szabályok és a mentések változatlanok. Részletek és tesztkorlátok: [GUARD_ATTACK.md](GUARD_ATTACK.md).
+
+## Változatos padlómozaikok · 2026-11-28
+
+[Lumenfall automation] A #58 ágon mindhárom környezet három eltérő padlómozaikot kapott, változatlan helyválasztással, mentésekkel és háttércache-sel. Részletek, 187 sikeres teszt és böngészős ellenőrzési korlát: [MOSAIC_VARIANTS.md](MOSAIC_VARIANTS.md). A főág és az éles oldal változatlan.
